@@ -1,5 +1,5 @@
 ---
 layout: page
 title: Konrad Patucha
-subtitle: This is where I will tell my friends way too much about me
+subtitle: sth sth dark side
 ---
