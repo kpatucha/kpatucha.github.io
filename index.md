@@ -2,4 +2,4 @@
 layout: page
 title: 
 ---
-![](ja.jpg =250x250)
+<img src="ja.jpg" align="left" height="350px" style="margin:35px">
