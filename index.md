@@ -1,5 +1,5 @@
 ---
 layout: page
-title: Konrad Patucha
-subtitle: sth sth dark side
+title: 
 ---
+![Alt text](ja.jpg)
