@@ -1,6 +1,7 @@
 ---
 layout: page
-title: 
+title:
+full-width: true
 ---
 <table>
   <tr>
