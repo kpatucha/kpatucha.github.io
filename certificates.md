@@ -3,7 +3,8 @@ layout: page
 title:
 full-width: true
 ---
-<table style="text-align:center">
+<div style="text-align:center">
+<table >
   <tr>
     <td><img src="/certificates/Konrad Patucha - Intro to SQL.png"  width = 600px></td>
     <td><img src="/certificates/Konrad Patucha - Advanced SQL.png" width = 600px ></td>
@@ -17,3 +18,4 @@ full-width: true
       <td><img src="/certificates/Konrad Patucha - Intermediate Machine Learning.png" width = 600px></td>
   </tr>
 </table>
+</div>
