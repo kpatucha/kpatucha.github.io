@@ -1,6 +1,7 @@
 ---
 layout: page
-title: 
+title:
+font-size: 1rem
 ---
 <img src="ja.jpg" align="left" height="350px" style="margin:5px">
 <div style="text-align: justify" markdown="1" size="1">
