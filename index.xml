@@ -44,7 +44,7 @@
 </div>
 </div>
 <p>Maybe it is not common convention but let’s call Dyck path from <img src="https://latex.codecogs.com/png.latex?(0,0)"> to <img src="https://latex.codecogs.com/png.latex?(n,n)"> <strong>Dyck path of order <img src="https://latex.codecogs.com/png.latex?n"></strong></p>
-<div id="bfc62216" class="cell" data-execution_count="1">
+<div id="636c2b5d" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
@@ -421,7 +421,7 @@ font-style: inherit;">4</span>])</span>
 </div>
 </div>
 <p>Imagine a <em>non-Dyck path</em> - at some point it crosses the <img src="https://latex.codecogs.com/png.latex?y=x"> line. Let’s call first step that makes the path a non-Dyck path <em>the bad step</em> - it causes the line to cross the <img src="https://latex.codecogs.com/png.latex?y=x"> line. Now reflect the part of the path from start up to the bad step with respect to line <img src="https://latex.codecogs.com/png.latex?y=x-1">.</p>
-<div id="f7f015f9" class="cell" data-execution_count="2">
+<div id="0f17af5e" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">fig, ax <span class="op" style="color: #5E5E5E;
@@ -615,7 +615,7 @@ font-style: inherit;">4</span>])</span></code></pre></div></div>
 <p>To prove Raney’s lemma we can use visual proof.</p>
 <p>First, let’s glue second copy of a sequence to our original sequence so we have a sequence of length <img src="https://latex.codecogs.com/png.latex?2n"> which satisfies: <img src="https://latex.codecogs.com/png.latex?%0Ax_%7Bi+n%7D%20=%20x_i%0A"></p>
 <p>If we plot cumulative sums of this extended sequence we get something like this:</p>
-<div id="5605807c" class="cell" data-execution_count="3">
+<div id="88e41657" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">seq <span class="op" style="color: #5E5E5E;
@@ -821,7 +821,7 @@ font-style: inherit;">1</span>,</span>
 </div>
 </div>
 <p>Shifting start of the sequence in this representation is equivalent to cyclic permutation (order of elements is preserved and elements discarded from begining of the original sequence are taken from the glued copy). If we shift the start to the global minimum of the cumulative sums, the resulting cyclic permutation of the sequence will satisfy condition Eq.&nbsp;4 for cumulative sums. In case the minimum is degenerate (like in presented example - there are two minima), we take the last minimum as our starting point.</p>
-<div id="e8b1c17d" class="cell" data-execution_count="4">
+<div id="5e4d4cb3" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">min_idx <span class="op" style="color: #5E5E5E;
@@ -1100,7 +1100,7 @@ font-style: inherit;">1</span>,</span>
 <section id="counting-dyck-paths---cyclic-permutations" class="level1">
 <h1>Counting Dyck paths - cyclic permutations</h1>
 <p>Equipped with Raney’s lemma we can move to second method of counting Dyck paths. But first we need to change representation of paths from sequence of UP and RIGHT steps to sequence of height of steps at each position:</p>
-<div id="d63df533" class="cell" data-execution_count="5">
+<div id="a5bb8462" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">dyck_path <span class="op" style="color: #5E5E5E;
@@ -1387,7 +1387,7 @@ font-style: inherit;">"Non-Dyck path, step heights"</span>)</span>
 </ol></li>
 </ol>
 <p>In Python, this can be implemented using generators:</p>
-<div id="e19d952b" class="cell" data-execution_count="6">
+<div id="a93b76d0" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -1530,7 +1530,7 @@ background-color: null;
 font-style: inherit;"># start from single UP step</span></span></code></pre></div></div>
 </div>
 <p>Slightly modified version returns Dyck paths in step height representation:</p>
-<div id="24c8d201" class="cell" data-execution_count="7">
+<div id="e9e05237" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -1680,7 +1680,7 @@ background-color: null;
 font-style: inherit;">0</span>)</span></code></pre></div></div>
 </div>
 <p>Let’s test it in action for order <img src="https://latex.codecogs.com/png.latex?n=4"></p>
-<div id="ada4e487" class="cell" data-execution_count="8">
+<div id="7c413752" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
