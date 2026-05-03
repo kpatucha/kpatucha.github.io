@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Konrad Patucha">
-<meta name="dcterms.date" content="2026-02-05">
+<meta name="dcterms.date" content="2026-05-03">
 <meta name="description" content="Counting paths on square lattice using cycle permutations">
 
 <title>Dyck paths and Raney’s (cycle) lemma – Konrad's Blog</title>
@@ -237,7 +237,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 5, 2026</p>
+        <p class="date">May 3, 2026</p>
       </div>
     </div>
     
@@ -295,7 +295,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Maybe it is not common convention but let’s call Dyck path from <span class="math inline">\((0,0)\)</span> to <span class="math inline">\((n,n)\)</span> <strong>Dyck path of order <span class="math inline">\(n\)</span></strong></p>
-<div id="b5498b12" class="cell" data-execution_count="1">
+<div id="bfc62216" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -394,7 +394,7 @@ N_\text{all paths} = {2n \choose n}
 </div>
 </div>
 <p>Imagine a <em>non-Dyck path</em> - at some point it crosses the <span class="math inline">\(y=x\)</span> line. Let’s call first step that makes the path a non-Dyck path <em>the bad step</em> - it causes the line to cross the <span class="math inline">\(y=x\)</span> line. Now reflect the part of the path from start up to the bad step with respect to line <span class="math inline">\(y=x-1\)</span>.</p>
-<div id="99da1b17" class="cell" data-execution_count="2">
+<div id="f7f015f9" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>)</span>
@@ -456,7 +456,7 @@ N_\text{Dyck paths} = {2n \choose n} - {2n \choose n-1} = \frac{1}{n+1} {2n \cho
 x_{i+n} = x_i
 \]</span></p>
 <p>If we plot cumulative sums of this extended sequence we get something like this:</p>
-<div id="3dd00221" class="cell" data-execution_count="3">
+<div id="5605807c" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>seq <span class="op">=</span> [<span class="dv">2</span>, <span class="op">-</span><span class="dv">5</span>, <span class="dv">0</span>, <span class="dv">8</span>, <span class="op">-</span><span class="dv">4</span>]</span>
@@ -508,7 +508,7 @@ x_{i+n} = x_i
 </div>
 </div>
 <p>Shifting start of the sequence in this representation is equivalent to cyclic permutation (order of elements is preserved and elements discarded from begining of the original sequence are taken from the glued copy). If we shift the start to the global minimum of the cumulative sums, the resulting cyclic permutation of the sequence will satisfy condition <a href="#eq-Cumsum" class="quarto-xref">Eq.&nbsp;4</a> for cumulative sums. In case the minimum is degenerate (like in presented example - there are two minima), we take the last minimum as our starting point.</p>
-<div id="aeeefa41" class="cell" data-execution_count="4">
+<div id="e8b1c17d" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>min_idx <span class="op">=</span> <span class="bu">len</span>(cum_sums) <span class="op">-</span> <span class="dv">1</span> <span class="op">-</span> cum_sums[::<span class="op">-</span><span class="dv">1</span>].index(min_cum_sum)</span>
@@ -573,7 +573,7 @@ x_{i+n} = x_i
 <section id="counting-dyck-paths---cyclic-permutations" class="level1">
 <h1>Counting Dyck paths - cyclic permutations</h1>
 <p>Equipped with Raney’s lemma we can move to second method of counting Dyck paths. But first we need to change representation of paths from sequence of UP and RIGHT steps to sequence of height of steps at each position:</p>
-<div id="1d9db90c" class="cell" data-execution_count="5">
+<div id="d63df533" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dyck_path <span class="op">=</span> [[<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>], [<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">4</span>]]</span>
@@ -720,7 +720,7 @@ N_\text{Dyck paths} = N_\text{cyclic groups} = \frac{1}{n+1}{2n \choose n}
 </ol></li>
 </ol>
 <p>In Python, this can be implemented using generators:</p>
-<div id="d6eb4c70" class="cell" data-execution_count="6">
+<div id="e19d952b" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dyck_paths(n: <span class="bu">int</span>):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Generator producing Dyck paths of order `n`.</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -749,7 +749,7 @@ N_\text{Dyck paths} = N_\text{cyclic groups} = \frac{1}{n+1}{2n \choose n}
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span> <span class="cf">from</span> make_path((<span class="dv">1</span>,), n_up<span class="op">=</span><span class="dv">1</span>, n_right<span class="op">=</span><span class="dv">0</span>)  <span class="co"># start from single UP step</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Slightly modified version returns Dyck paths in step height representation:</p>
-<div id="1463453c" class="cell" data-execution_count="7">
+<div id="24c8d201" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dyck_path_heights(n: <span class="bu">int</span>):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Generator producing Dyck paths of order `n` in heights representation</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -779,7 +779,7 @@ N_\text{Dyck paths} = N_\text{cyclic groups} = \frac{1}{n+1}{2n \choose n}
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span> <span class="cf">from</span> make_heights((<span class="dv">1</span>,), n_up<span class="op">=</span><span class="dv">1</span>, n_right<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Let’s test it in action for order <span class="math inline">\(n=4\)</span></p>
-<div id="0f3d0e01" class="cell" data-execution_count="8">
+<div id="ada4e487" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">4</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>catalan_number <span class="op">=</span> comb(<span class="dv">2</span> <span class="op">*</span> n, n, exact<span class="op">=</span><span class="va">True</span>, repetition<span class="op">=</span><span class="va">False</span>) <span class="op">//</span> (n <span class="op">+</span> <span class="dv">1</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
