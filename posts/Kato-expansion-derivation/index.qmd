@@ -2,7 +2,7 @@
 title: |
   High Order Perturbation Theory
   Part 1 - Kato Exapnsion Derivation
-date: "2026-02-05"
+date: 2026-05-03
 author: "Konrad Patucha"
 categories: [physics]
 description: Derivation of non-recursive perturbation theory for eigenvalue problems - Kato Expansion.
