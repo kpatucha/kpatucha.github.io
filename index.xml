@@ -10,7 +10,7 @@
 <atom:link href="https://kpatucha.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A blog built with Quarto</description>
 <generator>quarto-1.8.27</generator>
-<lastBuildDate>Wed, 04 Feb 2026 23:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 02 May 2026 22:00:00 GMT</lastBuildDate>
 <item>
   <title>Dyck paths and Raney’s (cycle) lemma</title>
   <dc:creator>Konrad Patucha</dc:creator>
@@ -1819,7 +1819,7 @@ font-style: inherit;">"</span>)</span>
 </div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{patucha2026,
   author = {Patucha, Konrad},
   title = {Dyck Paths and {Raney’s} (Cycle) Lemma},
-  date = {2026-02-05},
+  date = {2026-05-03},
   url = {https://kpatucha.github.io/posts/Dyck-paths-Raneys-lemma/},
   langid = {en}
 }
@@ -1829,7 +1829,7 @@ Patucha, <em>Dyck Paths and Raney’s (Cycle) Lemma </em>, <a href="https://kpat
 </div></div></section></div> ]]></description>
   <category>combinatorics</category>
   <guid>https://kpatucha.github.io/posts/Dyck-paths-Raneys-lemma/</guid>
-  <pubDate>Wed, 04 Feb 2026 23:00:00 GMT</pubDate>
+  <pubDate>Sat, 02 May 2026 22:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
