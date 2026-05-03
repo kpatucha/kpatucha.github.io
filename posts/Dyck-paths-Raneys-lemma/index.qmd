@@ -18,7 +18,7 @@ In this post I would like to show two methods to count number of [Dyck paths](ht
 2. The first method I will be presenting uses neat graphical trick which makes the problem very easy
 3. The second method is more elabore but highlights connection to cycle permutations which is useful in high-order pertrubation theory in quantum mechanics (method I will be describing in future posts)
 
-Both methods were briefly described in this [stackexchange answer](https://math.stackexchange.com/a/3237624).
+Both methods were briefly described in this [Stackexchange answer](https://math.stackexchange.com/a/3237624).
 
 # Dyck path
 ::: {.callout-note appearance="simple"}
