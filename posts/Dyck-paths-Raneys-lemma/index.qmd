@@ -8,10 +8,6 @@ description: Counting paths on square lattice using cycle permutations
 citation-location: document
 nocite: |
     @qiaochu2010, @neylon2015
-format:
-    html:
-        code-tools:
-            source: repo
 ---
 
 # Motivation
