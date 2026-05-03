@@ -1,7 +1,9 @@
 project:
   type: website
 
+repo-url: https://github.com/kpatucha/kpatucha.github.io
 website:
+  favicon: images/icon/favicon-32x32.png
   description: "A blog built with Quarto"
   site-url: https://kpatucha.github.io/ # you must change this appropriately for RSS feeds to work properly
   title: "Konrad's Blog"
