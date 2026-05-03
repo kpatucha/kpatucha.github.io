@@ -7,3 +7,5 @@
 
 # Python environments and caches
 /.quarto_venv/
+
+**/*.quarto_ipynb
