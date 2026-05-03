@@ -1,0 +1,27 @@
+---
+title: "About"
+image: ja.jpg
+about:
+  template: trestles
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/konrad-patucha-32b649157/
+    - icon: github
+      text: Github
+      href: https://github.com/kpatucha
+    - icon: mortarboard
+      text: Google scholar
+      href: https://scholar.google.com/citations?user=G8Bt24sAAAAJ
+    - icon: stack-overflow
+      text: StackExchange
+      href: https://stats.stackexchange.com/users/447347/kpatucha
+---
+
+Hi! My name is Konrad Patucha. I am a theoretical physics PhD specializing in emergent phenomena in complex condensed matter systems. I am also interested in machine learning.
+
+Currently I am working as a Data Scientist at [Kaczmarski Group](https://kaczmarskigroup.pl/). Previously I was Quantitative Analyst at [Allianz Quantitative Analytics](https://www.allianz.de/) and Assitant Professor at [ILTSR PAS](https://www.intibs.pl/).
+
+In my free time I experiment in the kitchen and play video games and board games.
+
+I've created this blog in order to share projects that I work on in my free time.

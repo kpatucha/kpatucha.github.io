@@ -1,0 +1,9 @@
+# Quarto generated files
+/.quarto/
+/_site/
+
+# Personal scratchpads
+.scratchpad.ipynb
+
+# Python environments and caches
+/.quarto_venv/

@@ -1,0 +1,31 @@
+project:
+  type: website
+
+website:
+  description: "A blog built with Quarto"
+  site-url: https://kpatucha.github.io/ # you must change this appropriately for RSS feeds to work properly
+  title: "Konrad's Blog"
+  navbar:
+    pinned: true
+    right:
+      - about.qmd
+      - icon: linkedin
+        href: https://www.linkedin.com/in/konrad-patucha-32b649157/
+      - icon: github
+        href: https://github.com/kpatucha
+      - icon: mortarboard
+        href: https://scholar.google.com/citations?user=G8Bt24sAAAAJ
+      - icon: stack-overflow
+        href: https://stats.stackexchange.com/users/447347/kpatucha
+
+bibliography: references.bib
+csl: american-physics-society.csl
+citation-location: margin # Moves citations to the right margin (very Tufte-esque, great for blogs)
+links-as-notes: false
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+      - custom.scss
+    css: styles.css

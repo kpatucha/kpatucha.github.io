@@ -1,0 +1,484 @@
+---
+title: |
+  High Order Perturbation Theory
+  Part 1 - Kato Exapnsion Derivation
+date: "2026-02-05"
+author: "Konrad Patucha"
+categories: [physics]
+description: Derivation of non-recursive perturbation theory for eigenvalue problems - Kato Expansion.
+abstract: >
+  Perturbation theory is very useful tool that helps approximate solutions to eigenvalue problems by series expansion. It was develped for quantum mechanics. Unfortunately, standard recursive way of calculating expansion terms is tedious and becomes intractable very fast. In this post will describe derivation of Kato expansion - non-recursive version of perturbation theory.
+draft: true
+---
+
+# Introduction
+
+This is first post in a series where I will describe high-order perturbation theory. I was inspired to dig into this topic by paper by Andre Eckardt[@eckardt2009] who used high-order perturbation expansion in very elegant way to describe phase transition in Bose-Hubard model. I think this is especially cool method for the following reasons:
+
+1. it is general - it can be applied to different types of systems, even eigenvalue problems outside quantum mechanics
+2. it is reusable - you can calculate the expansion once and reuse it for different problems
+3. it is "algorithmic" - we will be writing computer program (instead using software for symbolic math like Mathematica or [SymPy](https://www.sympy.org/en/index.html)) that produces representation of extremely complex formulas that would be nearly impossible to calculate by hand (or even write in $\LaTeX$)
+4. the derivation mixes different areas of mathematics - complex analysis, linear algebra and combinatorics
+
+I will start by deriving Kato expansion[@kato1995] since I think it is not so well known - the only quantum mechanics textbook that I know that describes it is "Quantum Mechanics" by Albert Messiah[@messiah2000] (see Vol. II, Chap. XVI, Sec. III). In the following posts I will describe algorithm to calculate expansion formulas, it's implementation in Python and finally I will demonstrate how to use the expansion to calculate eigenvalues for some toy problems.
+
+The version of pertrubation theory which I will be describing is called Rayleigh–Schrödinger perturbation theory - it is applied to time-independent Hamiltonian. For the basics, I will provide only minimal necessary introduction. You can read more about it in [Wikipedia article](https://en.wikipedia.org/wiki/Perturbation_theory_(quantum_mechanics)), Shankar's "Principles of Quantum Mechanics"[@shankar2014] or any other quantum mechanics textbook (these explanation will be probably better and more thorough than mine).
+
+# Perturbation theory
+
+Perturbation theory applies to problems where we can divide full Hamiltonian into a sum of main part $\hat{H}_0$ and perturbation $\hat{V}$ which strength is controlled by parameter $\lambda$. These two parts are usually non-commuting (since if they were, they have same eigenvectors) and $\hat{H}_0$ is "bigger" while $\lambda\hat{V}$ is "small" with respect to $\hat{H}_0$. This could be e.g. $\hat{H}_0$ describing non-interacting particles and $\hat{V}$ interaction between them or $\hat{H}_0$ could be harmonic oscillator and $\hat{V}$ anharmonic terms - you get the idea.
+
+We start with Hamiltonian (matrix or operator):
+$$
+\hat{H} = \hat{H}_0+\lambda\hat{V}
+$$ {#eq-HPerturb}
+
+We search for solution to eigenvalue problem:
+$$
+\hat{H}|n\rangle = E_n|n\rangle
+$$
+
+By expanding eigenvalue (energy) in series of $\lambda$ we get
+$$
+E_n = E_n^{(0)} + \lambda E_n^{(1)} + \lambda^2 E_n^{(2)} + \dots
+$$ {#eq-basicExpansion}
+
+and similarly for the eigenvector (eigenstate) 
+$$
+| n\rangle = |n^{(0)}\rangle +\lambda|n^{(1)}\rangle + \lambda^2|n^{(2)}\rangle + \dots
+$$
+
+This shows why perturbation theory is such cool concept - instead of diagonalizing full Hamiltonian $\hat{H}$ for each value of parameter $\lambda$ we calculate $E_n^{(\nu)}$ coefficients once and get eigenvalue $E_n$ (or rather approximation of it) for continuum of parameter $\lambda$ for free![^1] It is a simple polynomial.
+
+[^1]: Although, we have to calculate this expansion coefficients separately for each eigenvalue $E_n$ we need.
+
+In practice eigenstate corrections are not that useful in high-order perturbation theory - they are extremely complicated (far more than eigenvalue corrections) and aren't meaningful by themselves. We would usually use them to calculate expectation values of some observables.
+
+## Expectation values of observables - Hellmann-Feynman theorem
+
+Thankfully, we don't have to calculate eigenstate expansion to get expectation values of observables. We can use [Hellmann-Feynman theorem](https://en.wikipedia.org/wiki/Hellmann%E2%80%93Feynman_theorem) instead. It states that
+$$
+\frac{\partial E_n(\eta)}{\partial \eta} = \left\langle n(\eta) \left| \frac{\partial \hat{H}(\eta)}{\partial \eta} \right| n(\eta)\right\rangle
+$$
+
+where $\eta$ is some parameter that Hamiltonian depends on.
+
+Now consider Hamiltonian
+$$
+\hat{H}(\eta) = \hat{H} +\eta\hat{A}
+$$ {#eq-Htilde}
+
+It's derivative is simply observable $\hat{A}$
+$$
+\frac{\partial \hat{H}(\eta)}{\partial \eta} = \hat{A}
+$$
+
+If we also set $\eta=0$ the eigenstates go back to eigenstates of "naked" Hamiltonian $\hat{H}=\hat{H}(0)$
+$$
+|n(\eta)\rangle\rightarrow|n\rangle
+$$
+
+Hence, expecation value of an obseravble $\hat{A}$ in state $|n\rangle$ can be expressed as: 
+$$
+\langle n| \hat{A}| n \rangle = \left.\frac{\partial E_n(\eta)}{\partial \eta}\right|_{\eta=0}
+$$
+
+Notice that Hamiltonian @eq-Htilde is exactly the same as the Hamiltonian with a perturbation @eq-HPerturb. Let's apply expansion @eq-basicExpansion
+$$
+\begin{split}
+\langle\hat{A}\rangle &= 0 + E_n^{(1)} + 2\eta \tilde{E}_n^{(2)}|_{\eta=0}+3\eta^2 \tilde{E}_n^{(3)}|_{\eta=0} + \dots \\
+&= E_n^{(1)}
+\end{split}
+$$
+
+Now we know how to calculate observables - they are first correction in perturbation series. But we wanted to add pertrubation $\hat{V}$ *and* calculate expectation value of observable $\hat{A}$. Thankfully, nothing is stopping us from adding *two* (or more) perturbations:
+$$
+\hat{H}(\lambda,\eta) = \hat{H}_0 + \lambda\hat{V} + \eta\hat{A}
+$$
+
+Expanding eigenvalue in series of both parameters gives us 
+$$
+E_n(\lambda,\eta) = \sum_{\nu=0}^\infty \sum_{\mu=0}^\infty \lambda^\nu \eta^\mu E_n^{(\nu, \mu)}
+$$
+
+and we get expectation value of observable $\hat{A}$ from first order in $\nu$:
+$$
+\langle n|\hat{A}|n\rangle = \sum_{\nu=0}^\infty  \lambda^\nu E_n^{(\nu, 1)}
+$$
+
+# Kato expansion derivation
+In this section I will mostly follow derivation that can be found in PhD thesis of D. Hinrichs @hinrichs2012.
+
+Let's define operator called *resolvent* (it is related to [Green's function](https://physics.stackexchange.com/questions/45072/what-is-different-between-resolvent-and-green-function) in a sense that Green's function is representation of resolvent in particular basis)
+$$
+\hat{R}(z) = \left(z-\hat{H}\right)^{-1}
+$$ {#eq-ResolventDefinition}
+
+where
+
+- $\hat{H}$ - Hamiltonian
+- $z$ - some complex number
+
+We can decompose $\hat{H}$ as
+$$
+\hat{H} = \sum_n E_n\hat{P}_n
+$$
+
+where *projector* is
+$$
+\hat{P}_n = |n\rangle\langle n|
+$$
+
+This gives resolvent in form
+$$
+\hat{R}(z) = \sum_n\frac{\hat{P}_n}{z - E_n} 
+$$
+
+Using [Cauchy integral formula](https://en.wikipedia.org/wiki/Cauchy%27s_integral_formula) we get
+$$
+\begin{split}
+\frac{1}{2\pi i}\oint\limits_C \mathrm{d}z\ \hat{R}(z) &= \frac{1}{2\pi i}\oint\limits_C \mathrm{d}z \sum_n \frac{\hat{P}_n}{z-E_n}\\
+&= \sum_l \hat{P}_n\underbrace{\frac{1}{2\pi i}\oint\limits_C \mathrm{d}z \frac{1}{z-E_n}}_{1\text{ for }E_n \in C,\ 0 \text{ otherwise}}\\
+&=\sum_{n \in C} \hat{P}_n
+\end{split}
+$$
+
+where final sum runs over all projectors where eigenvalue $E_n$ lies inside contour $C$.
+
+Now consider Hamiltonian with a perturbation
+$$
+\hat{H} = \hat{H}_0 + \lambda\hat{V}
+$$
+
+Corresponding projector has form
+$$
+\hat{P}_n(\lambda) = \frac{1}{2\pi i}\oint\limits_C \mathrm{d}z\ \hat{R}(z)
+$$ {#eq-FullProjector}
+
+where contour $C$ encloses single eigenvalue $E_n(\lambda)$ (we assume that there is no degeneracy for now).
+
+Perturbation theory assumes that we can continuously deform projector
+$$
+\hat{P}_n(\lambda)\xrightarrow{\lim_{\lambda\rightarrow 0}}\hat{P}_n^{(0)}
+$$
+
+where $\hat{P}_n^{(0)}$ is defined by unperturbed Hamiltonian
+$$
+\hat{H}_0 = \sum_n E^{(0)}_n \hat{P}_n^{(0)} = \sum_n E_n^{(0)} |n^{(0)}\rangle\langle n^{(0)}|
+$$
+
+This means we can assume that we can find contour that $C$ encloses both unperturbed and perturbed eigenvalue. The resolvent of full Hamiltonian can be represented in the following way
+$$
+\begin{split}
+\hat{R}(z) &= \left(z - \hat{H}_0 - \lambda\hat{V}\right)^{-1}\\
+&=\left(\left[1-\lambda\hat{V}\cdot \hat{R}_0(z)\right]\cdot \hat{R}_0^{-1}(z)\right)^{-1} \\
+&=\hat{R}_0(z)\cdot\left[1-\lambda\hat{V}\cdot \hat{R}_0(z)\right]^{-1}
+\end{split}
+$$
+
+where resolvent of unperturbed Hamiltonian is
+$$
+\hat{R}_0(z) = \left(z - \hat{H}_0\right)^{-1}
+$$
+
+We can expand resolvent of full Hamiltonian in Taylor series about $\lambda=0$ 
+$$
+\hat{R}(z) = \hat{R}_0(z)\sum_{\nu=0}^\infty\left[\hat{V}\cdot \hat{R}_0(z)\right]^\nu \cdot \lambda^\nu
+$$ {#eq-ResolventExpansion}
+
+Plugging this into projector formula @eq-FullProjector we get
+$$
+\begin{split}
+\hat{P}_n(\lambda) &= \frac{1}{2\pi i}\oint\limits_C \mathrm{d}z\ \hat{R}_0(z) + \frac{1}{2\pi i} \sum_{\nu=1}^\infty \oint\limits_C \mathrm{d}z\ \hat{R}_0(z) \left[\hat{V}\cdot \hat{R}_0(z)\right]^\nu \lambda^\nu \\
+&=\hat{P}_n^{(0)} + \sum_{\nu=1}^\infty \hat{A}^{(\nu)} \lambda^\nu
+\end{split}
+$$
+
+where expansion coefficient is
+$$
+\hat{A}^{(\nu)} = \frac{1}{2\pi i} \oint\limits_C \mathrm{d}z\ \hat{R}_0(z) \left[\hat{V}\cdot \hat{R}_0(z)\right]^\nu \cdot \lambda^\nu
+$$ {#eq-ProjectorExpansionCoeff}
+
+To proceed we express unperturbed resolvent as a sum of two terms - one connected to state projectors of state $n$ which lies in side contour $C$ and second connected to all other projectors $k\neq n$:
+$$
+\hat{R}_0(z) = \left(z - E_n^{(0)}\right)^{-1}\hat{P}_n^{(0)} + \hat{S}(z)
+$$
+
+where *reduced resolvent* has form
+$$
+\hat{S}(z) = \sum_{k\neq n}\left(z - E_k^{(0)}\right)^{-1} \hat{P}_k^{(0)}
+$$
+
+The reduced resolvent $\hat{S}(z)$ has a nice property - result of taking derivative $\alpha$ times is proportional to rising $\hat{S}(z)$ to power $(\alpha+1)$:
+$$
+\begin{split}
+\hat{S}^{(\alpha)}(z)&=\frac{\mathrm{d}^\alpha}{\mathrm{d}z^\alpha} \hat{S}(z) = \frac{\mathrm{d}^\alpha}{\mathrm{d}z^\alpha} \sum_{k\neq n}\left[z - E_k^{(0)}\right]^{-1} \hat{P}_k^{(0)}\\
+&= (-1)^\alpha\: \alpha! \sum_{k\neq n} \left[z - E_k^{(0)}\right]^{-(\alpha+1)} \hat{P}_k^{(0)} \\
+&= (-1)^\alpha\: \alpha!\: \left[\hat{S}(z)\right]^{\alpha+1}
+\end{split}
+$$
+
+Using this property we can expand reduced resolved in Taylor series about $z=E_n^{(0)}$
+$$
+\begin{split}
+\hat{S}(z) &= \sum_{\alpha=0}^\infty\frac{1}{\alpha!} \hat{S}^{(\alpha)}\left(E_n^{(0)}\right) \left[z-E_n^{(0)}\right]^\alpha \\
+&=\sum_{\alpha=0}^{\infty} (-1)^\alpha \left[\hat{S}\left(E_n^{(0)}\right)\right]^{\alpha+1} \left[z-E_n^{(0)}\right]^\alpha
+\end{split}
+$$
+
+Putting everything together we get unperturbed resolvent as
+$$
+\begin{split}
+\hat{R}_0(z) &= \left[z - E_n^{(0)}\right]^{-1}\hat{P}_n^{(0)} + \sum_{\alpha=0}^{\infty} (-1)^\alpha \left[\hat{S}\left(E_n^{(0)}\right)\right]^{\alpha+1} \left[z-E_n^{(0)}\right]^\alpha\\
+& = \sum_{\alpha=-1}^{\infty} (-1)^\alpha \left[\hat{S}\left(E_n^{(0)}\right)\right]^{\alpha+1} \left[z-E_n^{(0)}\right]^\alpha\\
+&=\sum_{\alpha=0}^\infty (-1)^{\alpha-1}\hat{S}_{\alpha} \left[z-E_n^{(0)}\right]^{\alpha-1}
+\end{split}
+$$ {#eq-Resolvent0Expansion}
+
+where in the last step we shifted index $\alpha+1\rightarrow \alpha$ and introduced operator
+$$
+\hat{S}_{\alpha} = \begin{cases}
+-\hat{P}_n^{(0)}=-|n^{(0)}\rangle\langle n^{(0)}| & \text{for} & \alpha=0\\
+\sum\limits_{k\neq n}\frac{\hat{P}_k^{(0)}}{\left(E_n^{(0)}-E_k^{(0)}\right)^\alpha}=\sum\limits_{k\neq n}\frac{|k^{(0)}\rangle\langle k^{(0)}|}{E_{nk}^\alpha} & \text{for} & \alpha>0
+\end{cases}
+$$
+
+where $E_{nk}=E_n^{(0)}-E_k^{(0)}$. Equation @eq-Resolvent0Expansion is [Laurent series](https://mathworld.wolfram.com/LaurentSeries.html) of $\hat{R}_0(z)$.
+
+Now we can insert resolvent expansion @eq-Resolvent0Expansion into expansion coefficient $\hat{A}^{(\nu)}$ of the projector @eq-ProjectorExpansionCoeff:
+$$
+\begin{split}
+\hat{A}^{(\nu)} &= \frac{1}{2\pi i}\oint\limits_C \mathrm{d}z\left\{\sum_{\alpha_1=0}^{\infty}(-1)^{\alpha_1-1}\hat{S}_{\alpha_1} \left[z - E_n^{(0)}\right]^{\alpha_1-1}\right.\\
+&\left.\times\left[\hat{V} \sum_{\alpha=0}^{\infty}(-1)^{\alpha-1}\hat{S}_{\alpha} \left[z - E_n^{(0)}\right]^{\alpha-1}\right]^\nu\right\}\\
+\end{split}
+$$
+
+The power $\nu$ leads to additional $\nu$ sums over $\alpha$ which means integrand will have form sequence of alterneting operator $\hat{S}_{\alpha_j}$ and $\hat{V}$ with some prefactor:
+$$
+\begin{split}
+&\sum_{\{\alpha_j\}}(-1)^{\alpha_1-1}\hat{S}_{\alpha_1}  \cdot \left(z - E_n^{(0)}\right)^{\alpha_1-1} \cdot \hat{V} \cdot (-1)^{\alpha_2-1}\hat{S}_{\alpha_2} \cdot \left(z - E_n^{(0)}\right)^{\alpha_2-1}\cdot\ldots \\
+&\qquad \cdot \hat{V}\cdot (-1)^{\alpha_{\nu+1}-1}\hat{S}_{\alpha_{\nu+1}} \cdot \left(z - E_n^{(0)}\right)^{\alpha_{\nu+1}-1} \\
+&=\sum_{\{\alpha_j\}}\left[(-1)\cdot\left(z - E_n^{(0)}\right)\right]^\Lambda \hat{S}_{\alpha_1}\cdot\hat{V} \cdot \hat{S}_{\alpha_2}\cdot\hat{V} \cdot\ldots\cdot \hat{V}\cdot \hat{S}_{\alpha_{\nu+1}}
+\end{split}
+$$
+
+where sum runs over all sequences $\{\alpha_j\}$ with $j \in [1, \nu+1]$ and $\alpha_j \in [0,\infty)$ and
+$$
+\Lambda =\sum_{j=1}^{\nu+1}\left(\alpha_{j}-1\right)
+$$
+
+Due [residue theorem](https://mathworld.wolfram.com/ResidueTheorem.html) $\hat{A}^{(\nu)}$ equals to residue of this integrand. Since it already has form of Laurent series this means that only terms corresponding to $\left[z-E_n^{(0)}\right]^{-1}$ will give non-zero contributions. This means there is constraint on the power $\Lambda$
+$$
+\Lambda = \sum_{j=1}^{\nu+1} \left(\alpha_j-1\right) = \left(\sum_{j=1}^{\nu+1}\alpha_j\right) - (\nu+1) = -1\\
+$$
+
+This means that $(-1)^\Lambda=-1$ and we have constraint on sequence of non-negative integers $\{\alpha_j\}$
+$$
+\sum_{j=1}^{\nu+1}\alpha_j=\nu
+$$
+
+Putting everything together we get final form the projector expansion coefficients
+$$
+\hat{A}^{(\nu)} = - \sum_{\{\alpha_j\}} \hat{S}_{\alpha_1}\hat{V}\hat{S}_{\alpha_2}\hat{V} \dots \hat{V}\hat{S}_{\alpha_{\nu+1}}
+$$
+
+In order to calculate expansion for the eigenvalues we can look at the following equation
+$$
+\left(\hat{H}-E_n^{(0)}\right)\hat{P}_n = \frac{1}{2\pi i}\oint\limits_C \mathrm{d}z\ (\hat{H}-E_n^{(0)})\cdot \hat{R}(z)
+$$ {#eq-EigValIntegral}
+
+Multipling the definition of the resolvent @eq-ResolventDefinition by $(z-\hat{H})$ from both sides, and rearranging terms, we get following identity:
+$$
+\hat{H}\cdot\hat{R}(z) = -\hat{I} + z\hat{R}(z)
+$$
+
+Inserting it into @eq-EigValIntegral ($-\hat{I}$ will vanish due to [Cauchy integral theorem](https://mathworld.wolfram.com/CauchyIntegralTheorem.html)) and using again expansion of the resolvent @eq-ResolventExpansion we get
+$$
+\begin{split}
+\left(\hat{H}-E_n^{(0)}\right)\hat{P}_n &= \frac{1}{2\pi i}\oint\limits_C \mathrm{d}z\ \left[z-E_n^{(0)}\right] \hat{R}_0(z)\sum_{\nu=1}^\infty \left[\hat{V}\cdot\hat{R}_0(z)\right]^\nu \lambda^\nu\\
+&= \sum_{\nu=1}^\infty \lambda^\nu  \hat{B}^{(\nu)}
+\end{split}
+$$
+
+where
+$$
+\hat{B}^{(\nu)} = \frac{1}{2\pi i} \oint\limits_C \mathrm{d}z\ \left[z- E_n^{(0)}\right] \hat{R}_0(z)\sum_{\nu=1}^\infty \left[\hat{V}\cdot\hat{R}_0(z)\right]^\nu
+$$
+
+Using analogous transformation as in calculations of projector expansion coefficients @eq-ProjectorExpansionCoeff we again arrive at similar formula for coefficient $\hat{B}^{(\nu)}$ but since there is additional power of $\left(z-E_n^{(0)}\right)$ in the integrand, the constraint on sequence $\{\alpha_j\}$ is shifted by one:
+$$
+\sum_{j=1}^{\nu+1}\alpha_j = \nu-1
+$$
+
+and consequently we have factor $(-1)^{\Lambda}=1$. Putting this together we get form of the coefficients
+$$
+\hat{B}^{(\nu)} = \sum_{\{\alpha_j\}} \hat{S}_{\alpha_1}\hat{V}\hat{S}_{\alpha_2}\hat{V} \dots \hat{V}\hat{S}_{\alpha_{\nu+1}}
+$$
+
+Applying trace to @eq-EigValIntegral we get
+$$
+\begin{split}
+\mathrm{Tr}\left(\left[\hat{H}-E_n^{(0)}\right]\cdot\hat{P}_n\right) &= \sum_{m}\left\langle m^{(0)}\left|\left[\hat{H}-E_n^{(0)}\right]\cdot\hat{P}_n\right|m^{(0)}\right\rangle \\
+&= E_n - E_n^{(0)}\\
+&= \sum_{\nu=1}^\infty \lambda^\nu \cdot \mathrm{Tr}\left(\hat{B}^{(\nu)}\right)
+\end{split}
+$$
+
+Rearranging we get expansion for eigenvalue
+$$
+E_n = E_n^{(0)} + \sum_{\nu=1}^\infty \lambda^\nu \cdot \mathrm{Tr}\left(\hat{B}^{(\nu)}\right)
+$$ {#eq-EigValExpansionRaw}
+
+## Simplification
+From the formula @eq-EigValExpansionRaw we get that  $\nu$-th order expansion of eigenvalue $E_n$ is given by (we can take the sum out of the trace):
+$$
+E_n^{(\nu)} = \sum_{\{\alpha_j\}}\mathrm{Tr}\left( \hat{S}_{\alpha_{1}}\hat{V}\hat{S}_{\alpha_2}\dots \hat{S}_{\alpha_{\nu}}\hat{V}\hat{S}_{\alpha_{\nu+1}}\right)
+$$ {#eq-EigValExpansion}
+
+where we operators $\hat{S}_\alpha$ have form
+$$
+\hat{S}_{\alpha} = \begin{cases}
+-|n^{(0)}\rangle\langle n^{(0)}| & \text{for} & \alpha=0\\
+\sum\limits_{k\neq n}\frac{|k^{(0)}\rangle\langle k^{(0)}|}{E_{nk}^\alpha} & \text{for} & \alpha>0
+\end{cases}
+$$
+
+where $E_{nk} = E_n^{(0)} - E_k^{(0)}$ , and sum runs over all possible sequences $\{\alpha_j\}$ of non-negative integers of length $\nu+1$ which obey following relation:
+$$
+\sum_{l=j}^{\nu+1}\alpha_l = \nu-1
+$$ {#eq-SeqConstraintBasic}
+
+Operator $\hat{S}_\alpha$ has following properties:
+$$\begin{split}
+\begin{cases}
+\hat{S}_0\hat{S}_0&=-\hat{S}_0\\
+\hat{S}_\alpha\hat{S}_\beta &= \hat{S}_{\alpha + \beta}&\text{for} &\alpha,\beta&>0\\
+\hat{S}_0\hat{S}_\alpha &= 0 &\text{for}&\alpha &>0
+\end{cases}
+\end{split}
+$$ {#eq-SOpMultRules}
+
+which follow from the fact that for $\hat{S}_0\sim\hat{P}_n^{(0)}$ and $\hat{S}_{\alpha>0}\sim \hat{P}_{k\neq n}^{(0)}$ and states $|n^{(0)}\rangle$ and $|k^{(0)}\rangle$ are orthogonal. These properties indicate that sequences where $\alpha_1=0$ and $\alpha_{\nu+1}\neq 0$, or $\alpha_{\nu+1}=0$ and $\alpha_1\neq 0$ ($0$ at one end and non-zero at the other end) will vanish under the trace.
+
+Thanks to invariance of a trace under cyclic permutations we can move last operator $\hat{S}_{\alpha_{\nu+1}}$ in @eq-EigValExpansion to the beginning of the sequence:
+$$
+\mathrm{Tr}\left(\hat{S}_{\alpha_1}\hat{V}\hat{S}_{\alpha_2}\dots\hat{S}_{\alpha_\nu}\hat{V}\hat{S}_{\alpha_{\nu+1}}\right) = \mathrm{Tr}\left(\hat{S}_{\alpha_{\nu+1}}\hat{S}_{\alpha_1}\hat{V}\hat{S}_{\alpha_2}\dots\hat{S}_{\alpha_\nu}\hat{V}\right)
+$$
+
+Operators $\hat{S}_{\nu+1}$ and $\hat{S}_{\alpha_1}$ can be merged according to rules @eq-SOpMultRules. However, this will lead to some terms that will vanish and some terms that should appear multiple times (e.g. both $\hat{S}_1\hat{S}_2$ and $\hat{S}_2\hat{S}_1$ would both merge into $\hat{S}_3$). Let's define auxiliary factor that will control for this ambiguity
+$$
+w=\begin{cases}
+-1 & \text{if} &\alpha_1=0,\ \alpha_{\nu+1}=0& & \\
+0 & \text{if} &\alpha_1=0,\ \alpha_{\nu+1}\neq0 & \text{or} & \alpha_1\neq0, \alpha_{\nu+1}=0 \\
+l-1 & \text{if} &\alpha_1\neq0,\ \alpha_{\nu+1}\neq0 & \text{and} & \alpha_1+\alpha_{\nu+1}=l
+\end{cases}
+$$ {#eq-SeqWeight}
+
+where first factor comes from first property in @eq-SOpMultRules and last factor comes from the fact that there are $(l-1)$ ways to choose two positive integers $x,y >0$ that satisfy $x+y=l$. Now we can rewrite @eq-EigValExpansion as
+$$
+E_n^{(\nu)} = \sum_{\{\beta_j\}} w\cdot \mathrm{Tr}\left(\hat{S}_{\beta_1}\hat{V}\hat{S}_{\beta_2}\hat{V}\cdots\hat{S}_{\beta_\nu}\hat{V}\right)
+$$ {#eq-EigValExpansionWeighted}
+
+where
+$$
+\begin{split}
+\sum_{j=1}^\nu \beta_j&=\sum_{j=1}^{\nu+1}\alpha_j=\nu-1 \\
+\beta_j &\geq 0
+\end{split}
+$$ {#eq-SeqConstraintBetaPrime}
+
+The set of all $\{\beta_j\}$ sequences is obviously smaller than the set of all sequences $\{\alpha_j\}$ but the weight @eq-SeqWeight takes care of that if we define it as 
+$$
+w=\beta_1-1
+$$
+
+This form corrects the mapping from $\{\alpha_j\}$ to $\{\beta_j\}$ because:
+
+1. for $\alpha_1=\alpha_{\nu+1}=0$ it correctly applies $-1$ factor
+2. for $(\alpha_1=1, \alpha_{\nu+1}=0)$ and $(\alpha_1=0, \alpha_{\nu+1}=1)$ it correctly applies factor $0$ - there is no way to merge two operators $\hat{S}_{\alpha_1}$ and $\hat{S}_{\alpha_{\nu+1}}$ and create nonvanishing operator $\hat{S}_{\beta_1}$ where $\beta_1=1$
+3. for $(\alpha_1\neq 0, \alpha_{\nu+1}\neq 0)$ it correctly includes all possibilities applying $l-1$ factor - it omits the two vanishing possibilities $(\alpha_1=0,\alpha_{\nu+1}> 1)$ and $(\alpha_1> 1,\alpha_{\nu+1}= 0)$
+
+The trace in @eq-EigValExpansionWeighted consists of blocks of form $\hat{S}_{\beta_j}\hat{V}$ which can be identified by elements of sequences $\{\beta_j\}$. The trace is invariant under cyclic permutation. This means that we can group all possible sequence $\{\beta_j\}$ into cyclic groups $\mathcal{C}$, which will have same contribution coming from the trace, but the factor $\beta_1$ will change. Let's define generator $\{\beta'_j\}$ ("initial element" or ordering in our case) of one of the cylic groups $\mathcal{C}$. The contribution from this group will be:
+$$
+\begin{split}
+\sum_{\{\beta_j\}\in \mathcal{C}}(\beta_1-1) &\cdot\mathrm{Tr}\left(\hat{S}_{\beta_1}\hat{V}\hat{S}_{\beta_2}\hat{V}\cdots\hat{S}_{\beta_\nu}\hat{V}\right) \\ &=\mathrm{Tr}\left(\hat{S}_{\beta'_1}\hat{V}\hat{S}_{\beta'_2}\hat{V}\cdots\hat{S}_{\beta'_\nu}\hat{V}\right) \cdot \sum_{\{\beta_j\}\in \mathcal{C}}\left(\beta_1-1\right)
+\end{split}
+$$ {#eq-CyclicWeight}
+
+where
+
+- $\mathcal{C}$ is one of the cyclic groups
+- trace in the second line is calculated for the generator element $\{\beta'_j\}$ of cyclic group $\mathcal{C}$
+- final sum runs over all possible *first elements* of sequences in the group $\mathcal{C}$
+
+Note that the constraint @eq-SeqConstraintBetaPrime can be interpreted as placing $\nu-1$ particles in $\nu$ states. These two numbers are incommensurable - their greatest common denominator is 1 ($\gcd(\nu,\nu-1)=1$), which means that there are no sub-cycles and each cyclic group $\mathcal{C}$ has exactly $\nu$ elements. This in turn means that each element of the generator $\{\beta'_j\}$ will be placed as the first one exactly once when summing within cyclic group $\mathcal{C}$ in right-hand side of @eq-CyclicWeight:
+$$
+\sum_{\{\beta_j\}\in C}(\beta_1-1) = \sum_{j=1}^\nu (\beta'_j-1) = \left(\sum_{j=1}^\nu \beta'_j\right) - \nu = \nu-1-\nu=-1
+$$
+
+which means that overall, each cyclic group will give contribution $-1$ in @eq-EigValExpansionWeighted:
+$$
+E_n^{(\nu)} = -\sum_{\{\beta'_l\}}\mathrm{Tr}\left(\hat{S}_{\beta'_1}\hat{V}\hat{S}_{\beta'_2}\hat{V}\cdots\hat{S}_{\beta'_\nu}\hat{V}\right)
+$$
+where sum runs over single sequence $\{\beta'_j\}$ (generator) per cyclic group $\mathcal{C}$. 
+
+This form simplifies formula and reduces number of terms. However, it is not very convenient - it would be best to explicitly find one sequence from each cyclic permutation. In order to do this we can imagine a path on a grid in $(x,y)$ plane from origin $(0,0)$ to point $(\nu-1,\nu-1)$ that can go only UP and RIGHT. Sequences $\{\beta_j\}$ then map to heights of steps at position $0,1,\cdots,\nu-1$ in $x$ direction (there will be $\nu$ of these steps). The proof for number of [Dyck paths](https://mathworld.wolfram.com/DyckPath.html) using Raney's lemma (or Cycle lemma) takes advantage of the fact that there is only one path per cyclic permutation that that lies above $x=y$ line. Sequences $\{\beta_j\}$ which represent paths above this line are defined by following constraints
+$$
+\begin{cases}
+\sum\limits_{j=1}^\nu \beta_j = \nu -1 & & \\
+\sum\limits_{j=1}^s \beta_j \geq s &\text{where} & s\in\left[1,2,\cdots,\nu-1\right]
+\end{cases}
+$$
+
+Together these constraints mean that last element $\beta_\nu=0$ in these sequences. We can go back and split this last operator
+$$
+\hat{S}_{\alpha'_\nu}=\hat{S}_0 = -\hat{S}_0\hat{S}_0
+$$
+absorb minus and apply cyclic permutation to arrive at
+$$
+E_n^{(\nu)} = \sum_{\{\alpha'_l\}}\mathrm{Tr}\left(\hat{S}_0\hat{V}\hat{S}_{\alpha'_1}\hat{V}\hat{S}_{\alpha'_2}\hat{V}\cdots\hat{S}_{\alpha'_{\nu-1}}\hat{V}\hat{S}_0\right) \tag{13}
+$$
+^eq-TraceReduced
+
+with constraints
+$$
+\begin{split}
+\sum_{l=1}^{\nu-1}\alpha'_l&=\nu-1\\
+\sum_{l=1}^s \alpha'_l&\geq s, \quad s\in[1,2,\dots,\nu-1]
+\end{split}
+$$
+Since these sequences are [[Isomorphism|isomorphic]] to [[Dyck path|Dyck paths]] there are for order $\nu$ there is:
+$$
+C_\nu=\frac{1}{\nu+1}{2\nu \choose \nu}
+$$
+where $C_\nu$ is [[Catalan number]].
+Since first and last operator under the trace [[#^eq-TraceReduced|(13)]] are fixed to $\hat{S}_0$ we can simplify the trace to
+$$
+E_n^{(\nu)} = \sum_{\{\alpha_l\}}\langle n|\hat{V}\hat{S}_{\alpha_{\nu-1}}\hat{V}\hat{S}_{\alpha_\nu}\hat{V}\dots\hat{S}_{\alpha_2}\hat{V}\hat{S}_{\alpha_1}\hat{V}|n\rangle \tag{14}
+$$
+^eq-ExpansionFinal
+
+
+In Eq. [[#^eq-ExpansionFinal|(14)]] many terms will give the same contributions. To determine unique terms we can first simplify notation by representing terms in Eq. [[#^eq-ExpansionFinal|(14)]] by sequence $\{\alpha_l\}$:
+$$
+\langle n|\hat{V}\hat{S}_{0}\hat{V}\hat{S}_{1}\hat{V}\hat{S}_{2}\hat{V} |n \rangle = (210)
+$$
+This representation can be broken-up further into elementary matrix elements (EMEs) which contain only non-zero values of $\alpha_l$ and diagonal elements $V_{nn} = \langle n|\hat{V}|n\rangle$. It can be thought of as representing $|n\rangle$ as $)$ and $\langle n|$ as $($ in operator $\hat{S}_0$ e.g.:
+$$
+(210) = (21)()
+$$
+EMEs representation helps to collect terms which give the same contributions. To do this we use two facts about EMEs representation:
+1. EMEs are Hermitian - reversing order of numbers inside EME doesn't change it's value (i.e. $(31)=(13)$) ^b56076
+2. Permutations of EMEs within the term don't change the value of the term ^e8ef7f
+
+Second fact can be shown in an example:
+$$\begin{split}
+(310011)&=\langle n|\hat{V}\hat{S}_1\hat{V}\hat{S}_1\hat{V}\hat{S}_0\hat{V}\hat{S}_0\hat{V}\hat{S}_1\hat{V}\hat{S}_3\hat{V}|n\rangle \\
+&= \frac{V_{nk_1}V_{k_1k_2}V_{k_2n}}{E_{nk_1}E_{nk_2}} V_{nn}\frac{V_{nk_3}V_{k_3k_4}V_{k_4n}}{E_{nk_3}E_{nk_4}^2} \\
+&= (31)()(11) = (31)(11)()
+\end{split}$$
+where there is implicit summation over all $k_i$. EMEs begin with $\langle n|$ and end with $|n\rangle$ therefore they are no longer matrices but simply complex numbers which can be safely permuted within each term.
+
+Thanks to [[#^b56076|1.]] we can transform each term by choosing smaller algebraically ordering i.e. $(31)\rightarrow (13).$ Thanks to [[#^e8ef7f|2.]] we can also sort all EMEs lexicographically i.e. $(13)()(11)\rightarrow ()(11)(13)$. These operation will result in only *unique* terms in Eq. [[#^dbc0e5|(8)]]. Number of times these unique terms appear in the sum will give a factor in front of given term in final formula.
+
+Sign of each unique term is given by $(-1)^{l_0}$ where $l_0$ is number of times $0$ appears in sequence $\{\alpha_l\}$ due to the form of operator $\hat{S}_0$. This is equivalent to number of EMEs (including diagonal terms $()=V_{nn}$) minus 1 i.e. term $(310011)=(13)()(11)=()(11)(13)$ has sign $(-1)^{3-1}=+1$.
