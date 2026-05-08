@@ -5,9 +5,6 @@ date: 2026-05-03
 author: "Konrad Patucha"
 categories: [combinatorics]
 description: Counting paths on square lattice using cycle permutations
-citation-location: document
-nocite: |
-    @qiaochu2010, @neylon2015
 ---
 
 # Motivation
@@ -16,9 +13,9 @@ In this post I would like to show two methods to count number of [Dyck paths](ht
 
 1. It belongs to a family of very common counting problems (here is a [YouTube video by Numberphile](https://youtu.be/fczN0BCx0xs?si=kheI7sN49gTZDzgr) about these problems)
 2. The first method I will be presenting uses neat graphical trick which makes the problem very easy
-3. The second method is more elabore but highlights connection to cycle permutations which is useful in high-order pertrubation theory in quantum mechanics (method I will be describing in future posts)
+3. The second method is more elaborate but highlights connection to cycle permutations which is useful in high-order petrubation theory in quantum mechanics (method I will be describing in future posts)
 
-Both methods were briefly described in this [Stackexchange answer](https://math.stackexchange.com/a/3237624).
+Both methods were briefly described in this [Stackexchange answer](https://math.stackexchange.com/a/3237624). I've learned about Raney's lemma from Qiaochu Yuan blog[@qiaochu2010] (although not named Raney's lemma) and Tyler Neylon blog[@neylon2015].
 
 # Dyck path
 ::: {.callout-note appearance="simple"}
@@ -57,14 +54,10 @@ def seq_to_path(
     tuple[list, list]
         List of x and list of y coordinates of points on a path
     """
-    x, y = [starting_point[0]], [starting_point[1]]
-    for step in seq:
-        if step == 1:
-            x.append(x[-1])
-            y.append(y[-1] + 1)
-        elif step == 0:
-            x.append(x[-1] + 1)
-            y.append(y[-1])
+    steps = np.array(seq)
+    # Concatenate [0] at the start to represent the initial starting point shift
+    x = starting_point[0] + np.concatenate(([0], np.cumsum(steps == 0)))
+    y = starting_point[1] + np.concatenate(([0], np.cumsum(steps == 1)))
     return x, y
 
 
@@ -216,7 +209,7 @@ ax.set_yticks(
 )
 ```
 
-Shifting start of the sequence in this representation is equivalent to cyclic permutation (order of elements is preserved and elements discarded from begining of the original sequence are taken from the glued copy). If we shift the start to the global minimum of the cumulative sums, the resulting cyclic permutation of the sequence will satisfy condition @eq-Cumsum for cumulative sums. In case the minimum is degenerate (like in presented example - there are two minima), we take the last minimum as our starting point.
+Shifting start of the sequence in this representation is equivalent to cyclic permutation (order of elements is preserved and elements discarded from beginning of the original sequence are taken from the glued copy). If we shift the start to the global minimum of the cumulative sums, the resulting cyclic permutation of the sequence will satisfy condition @eq-Cumsum for cumulative sums. In case the minimum is degenerate (like in presented example - there are two minima), we take the last minimum as our starting point.
 
 ```{python}
 #| code-fold: true
@@ -272,7 +265,7 @@ Few comments why this shift is unique and why resulting cyclic permutation of se
 - The copies of the points of the glued sequence are greater by $1$ than original points (the whole original sequence sums up to $1$ from the definition @eq-Sum)
 - *Last global minimum* is unique point
 - Non-last minimum would result in following minima at a value $y=0$ so corresponding to cumulative sums equal to $0$ - not strictly positive
-- Shifting start to any other point would result in minima below $y=0$ so negative cumlative sums
+- Shifting start to any other point would result in minima below $y=0$ so negative cumulative sums
 
 # Counting Dyck paths - cyclic permutations
 
@@ -355,7 +348,7 @@ This is suspicious - the number of cyclic groups of UP/RIGHT paths is equal to n
 
 Let's transform our sequence of step heights in the following way:
 $$
-b_{n+1-i} = -h_i +1
+b_{n+2-i} = -h_i +1
 $$ {#eq-htob}
 
 The minus in front of $i$ index means that sequence $b$ is running in the reverse order compared to sequence $h$. However, sum from index $1$ to $n+1$ include all elements from both sequences Constraint @eq-SumPath for $b$ sequence takes the following form:
@@ -400,7 +393,7 @@ We can now rename indices in the following way:
 $$
 \begin{cases}
 n+2-j &\rightarrow i\\
-j = s' - -1 &\rightarrow i = n +1 -s' \\
+j = s' + 1 &\rightarrow i = n + 1 - s' \\
 j = n + 1 &\rightarrow i = 1 \\
 n + 1 -s' &\rightarrow s
 \end{cases}
@@ -416,7 +409,7 @@ $$
 \sum_{i=1}^s h_i > s-1 \quad \text{for} \quad s\in[0,1,\dots,n]
 $$
 
-For $s=0$ we sum empty sequence, so this is trivially satisfied. Since we are dealing with integers we can change $>$ to $\geq$ by getting rid of $-1$. This gives us:
+For $s=0$ we sum empty sequence, so this is trivially satisfied (we have LHS:$\sum_{i=1}^0 h_i=0$ and RHS:$s-1=-1$, so $0>-1$). Since we are dealing with integers we can change $>$ to $\geq$ by getting rid of $-1$. This gives us:
 $$
 \sum_{i=1}^s h_i \geq s \quad \text{for} \quad s\in[1,\dots,n]
 $$
@@ -434,7 +427,7 @@ which is the same as in graphical method @eq-NDyckPathsGraph - **Success!**
 
 Although, this method was more elaborate than graphical method it highlights very important fact:
 
-> Dyck paths correpond to unique generators of all cyclic groups for sequences defined by:
+> Dyck paths correspond to unique generators of all cyclic groups for sequences defined by:
 $$
 \sum_{i=1}^{n+1}h_i = n \quad\text{,} \quad h_i \geq 0
 $$
@@ -505,7 +498,7 @@ def dyck_path_heights(n: int):
                 path[:-1] + (path[-1] + 1,), n_up=n_up + 1, n_right=n_right
             )
 
-        # add RIGHT step is you can
+        # add RIGHT step if you can
         if n_right < n_up:
             yield from make_heights(path + (0,), n_up=n_up, n_right=n_right + 1)
 
