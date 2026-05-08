@@ -160,7 +160,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="floating nav-fixed quarto-light">
+<body class="floating nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -266,22 +266,26 @@ window.Quarto = {
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
 
 
 
 
 
-<section id="motivation" class="level1">
+<section id="motivation" class="level1 page-columns page-full">
 <h1>Motivation</h1>
 <p>In this post I would like to show two methods to count number of <a href="https://mathworld.wolfram.com/DyckPath.html">Dyck paths</a> - special family of paths on square lattice. There are three main reasons why I think this is interesting problem:</p>
 <ol type="1">
 <li>It belongs to a family of very common counting problems (here is a <a href="https://youtu.be/fczN0BCx0xs?si=kheI7sN49gTZDzgr">YouTube video by Numberphile</a> about these problems)</li>
 <li>The first method I will be presenting uses neat graphical trick which makes the problem very easy</li>
-<li>The second method is more elabore but highlights connection to cycle permutations which is useful in high-order pertrubation theory in quantum mechanics (method I will be describing in future posts)</li>
+<li>The second method is more elaborate but highlights connection to cycle permutations which is useful in high-order petrubation theory in quantum mechanics (method I will be describing in future posts)</li>
 </ol>
-<p>Both methods were briefly described in this <a href="https://math.stackexchange.com/a/3237624">Stackexchange answer</a>.</p>
-</section>
+<p>Both methods were briefly described in this <a href="https://math.stackexchange.com/a/3237624">Stackexchange answer</a>. I’ve learned about Raney’s lemma from Qiaochu Yuan blog<span class="citation" data-cites="qiaochu2010">&nbsp;[<a href="#ref-qiaochu2010" role="doc-biblioref">1</a>]</span> (although not named Raney’s lemma) and Tyler Neylon blog<span class="citation" data-cites="neylon2015">&nbsp;[<a href="#ref-neylon2015" role="doc-biblioref">2</a>]</span>.</p>
+<div class="no-row-height column-margin column-container"><div id="ref-qiaochu2010" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">Y. Qiaochu, <a href="https://qchu.wordpress.com/2010/10/08/update-and-the-combinatorics-of-quintic-equations/">Update, and the combinatorics of quintic equations</a>, Annoying Precision (2010).</div>
+</div><div id="ref-neylon2015" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">T. Neylon, <a href="http://gaarlicbread.com/tmp/raneys_lemmas.html">Notes on <span>Raney</span>’s <span>Lemmas</span></a>, GaarlicBread (2015).</div>
+</div></div></section>
 <section id="dyck-path" class="level1">
 <h1>Dyck path</h1>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -295,7 +299,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Maybe it is not common convention but let’s call Dyck path from <span class="math inline">\((0,0)\)</span> to <span class="math inline">\((n,n)\)</span> <strong>Dyck path of order <span class="math inline">\(n\)</span></strong></p>
-<div id="27071dd7" class="cell" data-execution_count="1">
+<div id="a50c67a1" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -326,41 +330,37 @@ window.Quarto = {
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">    tuple[list, list]</span></span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">        List of x and list of y coordinates of points on a path</span></span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    x, y <span class="op">=</span> [starting_point[<span class="dv">0</span>]], [starting_point[<span class="dv">1</span>]]</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> step <span class="kw">in</span> seq:</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> step <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>            x.append(x[<span class="op">-</span><span class="dv">1</span>])</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>            y.append(y[<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> step <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>            x.append(x[<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>            y.append(y[<span class="op">-</span><span class="dv">1</span>])</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x, y</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    steps <span class="op">=</span> np.array(seq)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Concatenate [0] at the start to represent the initial starting point shift</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> starting_point[<span class="dv">0</span>] <span class="op">+</span> np.concatenate(([<span class="dv">0</span>], np.cumsum(steps <span class="op">==</span> <span class="dv">0</span>)))</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> starting_point[<span class="dv">1</span>] <span class="op">+</span> np.concatenate(([<span class="dv">0</span>], np.cumsum(steps <span class="op">==</span> <span class="dv">1</span>)))</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x, y</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>ax_good: Axes</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>ax_bad: Axes</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>fig, (ax_good, ax_bad) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>)</span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>ax_good: Axes</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>ax_bad: Axes</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>fig, (ax_good, ax_bad) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>ax_good.set_title(<span class="st">"Dyck path"</span>)</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>dyck_path <span class="op">=</span> seq_to_path([<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>])</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>ax_good.set_aspect(<span class="dv">1</span>)</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>ax_good.plot(dyck_path[<span class="dv">0</span>], dyck_path[<span class="dv">1</span>], marker<span class="op">=</span><span class="st">"."</span>, lw<span class="op">=</span><span class="dv">2</span>, ms<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>ax_good.plot([<span class="dv">0</span>, <span class="dv">4</span>], [<span class="dv">0</span>, <span class="dv">4</span>], zorder<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>ax_good.grid()</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>ax_good.set_yticks([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>ax_good.set_xticks([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>ax_bad.set_title(<span class="st">"Non-Dyck path"</span>)</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>non_dyck_path <span class="op">=</span> seq_to_path([<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>])</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>ax_bad.set_aspect(<span class="dv">1</span>)</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>ax_bad.plot(non_dyck_path[<span class="dv">0</span>], non_dyck_path[<span class="dv">1</span>], marker<span class="op">=</span><span class="st">"."</span>, lw<span class="op">=</span><span class="dv">2</span>, ms<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>ax_bad.plot([<span class="dv">0</span>, <span class="dv">4</span>], [<span class="dv">0</span>, <span class="dv">4</span>], zorder<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>ax_bad.grid()</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>ax_bad.set_yticks([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>ax_bad.set_xticks([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>ax_good.set_title(<span class="st">"Dyck path"</span>)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>dyck_path <span class="op">=</span> seq_to_path([<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>ax_good.set_aspect(<span class="dv">1</span>)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>ax_good.plot(dyck_path[<span class="dv">0</span>], dyck_path[<span class="dv">1</span>], marker<span class="op">=</span><span class="st">"."</span>, lw<span class="op">=</span><span class="dv">2</span>, ms<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>ax_good.plot([<span class="dv">0</span>, <span class="dv">4</span>], [<span class="dv">0</span>, <span class="dv">4</span>], zorder<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>ax_good.grid()</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>ax_good.set_yticks([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>ax_good.set_xticks([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>ax_bad.set_title(<span class="st">"Non-Dyck path"</span>)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>non_dyck_path <span class="op">=</span> seq_to_path([<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>])</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>ax_bad.set_aspect(<span class="dv">1</span>)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>ax_bad.plot(non_dyck_path[<span class="dv">0</span>], non_dyck_path[<span class="dv">1</span>], marker<span class="op">=</span><span class="st">"."</span>, lw<span class="op">=</span><span class="dv">2</span>, ms<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>ax_bad.plot([<span class="dv">0</span>, <span class="dv">4</span>], [<span class="dv">0</span>, <span class="dv">4</span>], zorder<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>ax_bad.grid()</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>ax_bad.set_yticks([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>ax_bad.set_xticks([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -394,7 +394,7 @@ N_\text{all paths} = {2n \choose n}
 </div>
 </div>
 <p>Imagine a <em>non-Dyck path</em> - at some point it crosses the <span class="math inline">\(y=x\)</span> line. Let’s call first step that makes the path a non-Dyck path <em>the bad step</em> - it causes the line to cross the <span class="math inline">\(y=x\)</span> line. Now reflect the part of the path from start up to the bad step with respect to line <span class="math inline">\(y=x-1\)</span>.</p>
-<div id="a6ea7f45" class="cell" data-execution_count="2">
+<div id="24d0d80b" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>)</span>
@@ -429,10 +429,12 @@ N_\text{Dyck paths} = {2n \choose n} - {2n \choose n-1} = \frac{1}{n+1} {2n \cho
 \tag{2}\]</span></span></p>
 <p>As promised, we got result that is famous in counting problems and is called <a href="https://en.wikipedia.org/wiki/Catalan_number">Catalan number</a> (in the Wikipedia article you will also find this proof in section <a href="https://en.wikipedia.org/wiki/Catalan_number#Second_proof">Second proof</a>)</p>
 </section>
-<section id="raneys-cycle-lemma" class="level1">
+<section id="raneys-cycle-lemma" class="level1 page-columns page-full">
 <h1>Raney’s (cycle) lemma</h1>
-<p>To get to the second method let’s first discuss Raney’s lemma (there is more general cycle lemma<span class="citation" data-cites="dershowitz1990">&nbsp;[<a href="#ref-dershowitz1990" role="doc-biblioref">1</a>]</span> but here we need this particular version):</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<p>To get to the second method let’s first discuss Raney’s lemma (there is more general cycle lemma<span class="citation" data-cites="dershowitz1990">&nbsp;[<a href="#ref-dershowitz1990" role="doc-biblioref">3</a>]</span> but here we need this particular version):</p>
+<div class="no-row-height column-margin column-container"><div id="ref-dershowitz1990" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">N. Dershowitz and S. Zaks, <a href="https://doi.org/10.1016/S0195-6698(13)80053-4">The <span>Cycle Lemma</span> and <span>Some Applications</span></a>, European Journal of Combinatorics <strong>11</strong>, 35 (1990).</div>
+</div></div><div class="callout callout-style-simple callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
@@ -456,7 +458,7 @@ N_\text{Dyck paths} = {2n \choose n} - {2n \choose n-1} = \frac{1}{n+1} {2n \cho
 x_{i+n} = x_i
 \]</span></p>
 <p>If we plot cumulative sums of this extended sequence we get something like this:</p>
-<div id="fece3ddc" class="cell" data-execution_count="3">
+<div id="6e9cba60" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>seq <span class="op">=</span> [<span class="dv">2</span>, <span class="op">-</span><span class="dv">5</span>, <span class="dv">0</span>, <span class="dv">8</span>, <span class="op">-</span><span class="dv">4</span>]</span>
@@ -507,8 +509,8 @@ x_{i+n} = x_i
 </div>
 </div>
 </div>
-<p>Shifting start of the sequence in this representation is equivalent to cyclic permutation (order of elements is preserved and elements discarded from begining of the original sequence are taken from the glued copy). If we shift the start to the global minimum of the cumulative sums, the resulting cyclic permutation of the sequence will satisfy condition <a href="#eq-Cumsum" class="quarto-xref">Eq.&nbsp;4</a> for cumulative sums. In case the minimum is degenerate (like in presented example - there are two minima), we take the last minimum as our starting point.</p>
-<div id="84eff88c" class="cell" data-execution_count="4">
+<p>Shifting start of the sequence in this representation is equivalent to cyclic permutation (order of elements is preserved and elements discarded from beginning of the original sequence are taken from the glued copy). If we shift the start to the global minimum of the cumulative sums, the resulting cyclic permutation of the sequence will satisfy condition <a href="#eq-Cumsum" class="quarto-xref">Eq.&nbsp;4</a> for cumulative sums. In case the minimum is degenerate (like in presented example - there are two minima), we take the last minimum as our starting point.</p>
+<div id="ac8f6bbf" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>min_idx <span class="op">=</span> <span class="bu">len</span>(cum_sums) <span class="op">-</span> <span class="dv">1</span> <span class="op">-</span> cum_sums[::<span class="op">-</span><span class="dv">1</span>].index(min_cum_sum)</span>
@@ -567,13 +569,13 @@ x_{i+n} = x_i
 <li>The copies of the points of the glued sequence are greater by <span class="math inline">\(1\)</span> than original points (the whole original sequence sums up to <span class="math inline">\(1\)</span> from the definition <a href="#eq-Sum" class="quarto-xref">Eq.&nbsp;3</a>)</li>
 <li><em>Last global minimum</em> is unique point</li>
 <li>Non-last minimum would result in following minima at a value <span class="math inline">\(y=0\)</span> so corresponding to cumulative sums equal to <span class="math inline">\(0\)</span> - not strictly positive</li>
-<li>Shifting start to any other point would result in minima below <span class="math inline">\(y=0\)</span> so negative cumlative sums</li>
+<li>Shifting start to any other point would result in minima below <span class="math inline">\(y=0\)</span> so negative cumulative sums</li>
 </ul>
 </section>
 <section id="counting-dyck-paths---cyclic-permutations" class="level1">
 <h1>Counting Dyck paths - cyclic permutations</h1>
 <p>Equipped with Raney’s lemma we can move to second method of counting Dyck paths. But first we need to change representation of paths from sequence of UP and RIGHT steps to sequence of height of steps at each position:</p>
-<div id="612b70e2" class="cell" data-execution_count="5">
+<div id="548d7a8d" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dyck_path <span class="op">=</span> [[<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>], [<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">4</span>]]</span>
@@ -645,7 +647,7 @@ N_\text{cylic groups} = \frac{N_\text{all paths}}{n+1} = \frac{1}{n+1} {2n \choo
 \tag{6}\]</span></span></p>
 <p>This is suspicious - the number of cyclic groups of UP/RIGHT paths is equal to number of Dyck paths <a href="#eq-NDyckPathsGraph" class="quarto-xref">Eq.&nbsp;2</a>. We can follow this trail and potentially find more direct connection.</p>
 <p>Let’s transform our sequence of step heights in the following way: <span id="eq-htob"><span class="math display">\[
-b_{n+1-i} = -h_i +1
+b_{n+2-i} = -h_i +1
 \tag{7}\]</span></span></p>
 <p>The minus in front of <span class="math inline">\(i\)</span> index means that sequence <span class="math inline">\(b\)</span> is running in the reverse order compared to sequence <span class="math inline">\(h\)</span>. However, sum from index <span class="math inline">\(1\)</span> to <span class="math inline">\(n+1\)</span> include all elements from both sequences Constraint <a href="#eq-SumPath" class="quarto-xref">Eq.&nbsp;5</a> for <span class="math inline">\(b\)</span> sequence takes the following form: <span class="math display">\[
 \begin{split}
@@ -678,7 +680,7 @@ b_{n+1-i} = -h_i +1
 <p>We can now rename indices in the following way: <span class="math display">\[
 \begin{cases}
 n+2-j &amp;\rightarrow i\\
-j = s' - -1 &amp;\rightarrow i = n +1 -s' \\
+j = s' + 1 &amp;\rightarrow i = n + 1 - s' \\
 j = n + 1 &amp;\rightarrow i = 1 \\
 n + 1 -s' &amp;\rightarrow s
 \end{cases}
@@ -689,7 +691,7 @@ s \in [0,1,\dots,n]
 <p>Putting everything into inequality <a href="#eq-hSumIneq2" class="quarto-xref">Eq.&nbsp;9</a> we get: <span class="math display">\[
 \sum_{i=1}^s h_i &gt; s-1 \quad \text{for} \quad s\in[0,1,\dots,n]
 \]</span></p>
-<p>For <span class="math inline">\(s=0\)</span> we sum empty sequence, so this is trivially satisfied. Since we are dealing with integers we can change <span class="math inline">\(&gt;\)</span> to <span class="math inline">\(\geq\)</span> by getting rid of <span class="math inline">\(-1\)</span>. This gives us: <span class="math display">\[
+<p>For <span class="math inline">\(s=0\)</span> we sum empty sequence, so this is trivially satisfied (we have LHS:<span class="math inline">\(\sum_{i=1}^0 h_i=0\)</span> and RHS:<span class="math inline">\(s-1=-1\)</span>, so <span class="math inline">\(0&gt;-1\)</span>). Since we are dealing with integers we can change <span class="math inline">\(&gt;\)</span> to <span class="math inline">\(\geq\)</span> by getting rid of <span class="math inline">\(-1\)</span>. This gives us: <span class="math display">\[
 \sum_{i=1}^s h_i \geq s \quad \text{for} \quad s\in[1,\dots,n]
 \]</span></p>
 <p>From the above calculation we conclude that:</p>
@@ -702,7 +704,7 @@ N_\text{Dyck paths} = N_\text{cyclic groups} = \frac{1}{n+1}{2n \choose n}
 <p>which is the same as in graphical method <a href="#eq-NDyckPathsGraph" class="quarto-xref">Eq.&nbsp;2</a> - <strong>Success!</strong></p>
 <p>Although, this method was more elaborate than graphical method it highlights very important fact:</p>
 <blockquote class="blockquote">
-<p>Dyck paths correpond to unique generators of all cyclic groups for sequences defined by: <span class="math display">\[
+<p>Dyck paths correspond to unique generators of all cyclic groups for sequences defined by: <span class="math display">\[
 \sum_{i=1}^{n+1}h_i = n \quad\text{,} \quad h_i \geq 0
 \]</span></p>
 </blockquote>
@@ -720,7 +722,7 @@ N_\text{Dyck paths} = N_\text{cyclic groups} = \frac{1}{n+1}{2n \choose n}
 </ol></li>
 </ol>
 <p>In Python, this can be implemented using generators:</p>
-<div id="75b24e0a" class="cell" data-execution_count="6">
+<div id="b37a4832" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dyck_paths(n: <span class="bu">int</span>):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Generator producing Dyck paths of order `n`.</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -749,7 +751,7 @@ N_\text{Dyck paths} = N_\text{cyclic groups} = \frac{1}{n+1}{2n \choose n}
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span> <span class="cf">from</span> make_path((<span class="dv">1</span>,), n_up<span class="op">=</span><span class="dv">1</span>, n_right<span class="op">=</span><span class="dv">0</span>)  <span class="co"># start from single UP step</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Slightly modified version returns Dyck paths in step height representation:</p>
-<div id="9623959f" class="cell" data-execution_count="7">
+<div id="a866a7be" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dyck_path_heights(n: <span class="bu">int</span>):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Generator producing Dyck paths of order `n` in heights representation</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -772,14 +774,14 @@ N_\text{Dyck paths} = N_\text{cyclic groups} = \frac{1}{n+1}{2n \choose n}
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                path[:<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> (path[<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> <span class="dv">1</span>,), n_up<span class="op">=</span>n_up <span class="op">+</span> <span class="dv">1</span>, n_right<span class="op">=</span>n_right</span>
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            )</span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># add RIGHT step is you can</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># add RIGHT step if you can</span></span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> n_right <span class="op">&lt;</span> n_up:</span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> <span class="cf">from</span> make_heights(path <span class="op">+</span> (<span class="dv">0</span>,), n_up<span class="op">=</span>n_up, n_right<span class="op">=</span>n_right <span class="op">+</span> <span class="dv">1</span>)</span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span> <span class="cf">from</span> make_heights((<span class="dv">1</span>,), n_up<span class="op">=</span><span class="dv">1</span>, n_right<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Let’s test it in action for order <span class="math inline">\(n=4\)</span></p>
-<div id="6c54fdbe" class="cell" data-execution_count="8">
+<div id="ef10ea48" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">4</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>catalan_number <span class="op">=</span> comb(<span class="dv">2</span> <span class="op">*</span> n, n, exact<span class="op">=</span><span class="va">True</span>, repetition<span class="op">=</span><span class="va">False</span>) <span class="op">//</span> (n <span class="op">+</span> <span class="dv">1</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -811,17 +813,7 @@ N_\text{Dyck paths} = N_\text{cyclic groups} = \frac{1}{n+1}{2n \choose n}
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
-<div id="ref-dershowitz1990" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[1] </div><div class="csl-right-inline">N. Dershowitz and S. Zaks, <a href="https://doi.org/10.1016/S0195-6698(13)80053-4">The <span>Cycle Lemma</span> and <span>Some Applications</span></a>, European Journal of Combinatorics <strong>11</strong>, 35 (1990).</div>
-</div>
-<div id="ref-qiaochu2010" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[2] </div><div class="csl-right-inline">Y. Qiaochu, <a href="https://qchu.wordpress.com/2010/10/08/update-and-the-combinatorics-of-quintic-equations/">Update, and the combinatorics of quintic equations</a>, Annoying Precision (2010).</div>
-</div>
-<div id="ref-neylon2015" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[3] </div><div class="csl-right-inline">T. Neylon, <a href="http://gaarlicbread.com/tmp/raneys_lemmas.html">Notes on <span>Raney</span>’s <span>Lemmas</span></a>, GaarlicBread (2015).</div>
-</div>
-</div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{patucha2026,
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{patucha2026,
   author = {Patucha, Konrad},
   title = {Dyck Paths and {Raney’s} (Cycle) Lemma},
   date = {2026-05-03},
