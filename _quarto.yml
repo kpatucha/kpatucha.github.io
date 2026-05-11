@@ -4,7 +4,6 @@ project:
 repo-url: https://github.com/kpatucha/kpatucha.github.io
 website:
   favicon: images/icon/favicon-32x32.png
-
   description: "Konrad Patucha's Blog"
   site-url: https://kpatucha.github.io/ # you must change this appropriately for RSS feeds to work properly
   title: "Konrad's Blog"
@@ -22,6 +21,16 @@ website:
         href: https://scholar.google.com/citations?user=G8Bt24sAAAAJ
       - icon: stack-overflow
         href: https://stats.stackexchange.com/users/447347/kpatucha
+  comments:
+    giscus: 
+      repo: kpatucha/kpatucha.github.io
+      repo-id: R_kgDOSTKd2A
+      category: "Announcements"
+      category-id: DIC_kwDOSTKd2M4C8z2N
+      mapping: pathname
+      input-position: top
+      reactions-enabled: true     
+
 
 bibliography: references.bib
 csl: american-physics-society.csl

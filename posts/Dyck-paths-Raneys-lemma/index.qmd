@@ -442,7 +442,7 @@ Sometimes counting Dyck paths isn't enough. We might want to generate all Dyck p
     i) If the number of UP steps is less than $n$ send to instruction 2. path so far with added UP step
     i) If the number of RIGHT steps is less than number of UP steps send to instruction 2. path so far with added RIGHT step
 
-In Python, this can be implemented using generators:
+In Python, this can be implemented using generators (they allow to iterate over some sequence similarilry to `range` or various generators from `itertools` module):
 
 ```{python}
 def dyck_paths(n: int):
