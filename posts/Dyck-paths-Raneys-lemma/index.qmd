@@ -3,7 +3,7 @@ title: |
     Dyck paths and Raney's (cycle) lemma
 date: 2026-05-03
 author: "Konrad Patucha"
-categories: [combinatorics]
+categories: [Combinatorics]
 description: Counting paths on square lattice using cycle permutations
 ---
 
