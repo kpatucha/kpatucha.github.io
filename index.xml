@@ -10,7 +10,478 @@
 <atom:link href="https://kpatucha.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>Konrad Patucha&#39;s Blog</description>
 <generator>quarto-1.8.27</generator>
-<lastBuildDate>Sat, 02 May 2026 22:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 07 Jun 2026 22:00:00 GMT</lastBuildDate>
+<item>
+  <title>SQL in Jupyter Notebook (JupySQL + VS Code + Jupyter Notebook)</title>
+  <dc:creator>Konrad Patucha</dc:creator>
+  <link>https://kpatucha.github.io/posts/JupySQL/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="motivation" class="level1">
+<h1>Motivation</h1>
+<p>As a Data Scientist I often work with SQL and Python. I wanted to find a way to blend work with both of these environments seamlessly. I wanted to avoid switching between tools, because I often need to query a database and transfer the result into Python for further processing. Here I present the setup I came up with for VS Code.</p>
+</section>
+<section id="tldr" class="level1">
+<h1>TL;DR</h1>
+<ol type="1">
+<li><p>Connect to the database using one of the VS Code extensions</p>
+<ul>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-mssql.mssql">SQL Server (mssql) extension</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-ossdata.vscode-pgsql">PostgreSQL extension</a> by Microsoft</li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-postgresql-client2">PostgreSQL extension</a> by Database Client (supports other databases like Oracle, DuckDB etc.)</li>
+</ul></li>
+<li><p>Install <a href="https://jupysql.readthedocs.io/en/latest/quick-start.html">JupySQL</a></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">pip</span> install jupysql</span></code></pre></div></div></li>
+<li><p>Create <a href="https://docs.sqlalchemy.org/en/20/core/connections.html#module-sqlalchemy.engine">SQLAlchemy engine</a> and assign it to <code>engine</code> variable</p></li>
+<li><p>Load JupySQL magics and connect using <code>engine</code></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>load_ext sql</span>
+<span id="cb2-2"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>sql engine <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>alias my_db</span></code></pre></div></div></li>
+<li><p>In the cell you want to write SQL, change cell language to SQL (<code>Ctrl + K, M</code> by default)</p></li>
+<li><p>Make sure the cell is connected to the database (active connection is visible at the top of the SQL cell) <img src="https://kpatucha.github.io/posts/JupySQL/cell_connect.png" class="img-fluid" alt="Connect cell"></p></li>
+<li><p>Put <code>%%sql</code> magic at the top of the SQL cell</p></li>
+<li><p>Write your SQL and enjoy SQL IntelliSense (context aware autocomplete), SQL formatting and work with <a href="https://jupysql.readthedocs.io/en/latest/integrations/pandas.html">Pandas DataFrames</a></p></li>
+<li><p>???</p></li>
+<li><p>Profit!</p></li>
+</ol>
+</section>
+<section id="requirements" class="level1">
+<h1>Requirements</h1>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="db_type">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">SQL Server</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false" href="">Oracle and others</a></li></ul>
+<div class="tab-content" data-group="db_type">
+<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
+<ul>
+<li><p>VS Code (I used version 1.122.1)</p></li>
+<li><p><a href="https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter">Jupyter extension</a> (and other dependencies like Python extensions etc.)</p></li>
+<li><p><a href="https://marketplace.visualstudio.com/items?itemName=ms-mssql.mssql">SQL Server (mssql) extension</a> <sup>1</sup></p></li>
+<li><p><a href="https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver17">ODBC drivers for SQL Server</a> - often preinstalled in the system</p></li>
+<li><p>Python packages</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">pip</span> install jupysql pandas ipykernel pyodbc</span></code></pre></div></div></li>
+</ul>
+</div>
+<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
+<ul>
+<li><p>VS Code (I used version 1.122.1)</p></li>
+<li><p><a href="https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter">Jupyter extension</a> (and other dependencies like Python extensions etc.)</p></li>
+<li><p><a href="https://marketplace.visualstudio.com/items?itemName=ms-ossdata.vscode-pgsql">PostgreSQL extension</a> - this one is by Microsoft. <a href="https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-postgresql-client2">PostgreSQL extension</a> by Database Client also works.</p></li>
+<li><p>Python packages</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">pip</span> install jupysql pandas ipykernel <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"psycopg[binary]"</span></span></code></pre></div></div></li>
+</ul>
+</div>
+<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
+<ul>
+<li><p>VS Code (I used version 1.122.1)</p></li>
+<li><p><a href="https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter">Jupyter extension</a> (and other dependencies like Python extensions etc.)</p></li>
+<li><p><a href="https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-postgresql-client2">PostgreSQL extension</a> by Database Client (only 3 configured connections in free tier, but supports multiple database types)<sup>2</sup></p></li>
+<li><p>Python packages</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">pip</span> install jupysql pandas ipykernel</span>
+<span id="cb5-2"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">pip</span> install oracledb <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># or other relevant database driver</span></span></code></pre></div></div></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="connect-to-the-database" class="level1">
+<h1>Connect to the database</h1>
+<section id="vs-code-extension" class="level2">
+<h2 class="anchored" data-anchor-id="vs-code-extension">VS Code extension</h2>
+<p>Establish connection to the database in your VS Code extension</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="db_type">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" aria-controls="tabset-2-1" aria-selected="true" href="">SQL Server</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" aria-controls="tabset-2-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" aria-controls="tabset-2-3" aria-selected="false" href="">Oracle and others</a></li></ul>
+<div class="tab-content" data-group="db_type">
+<div id="tabset-2-1" class="tab-pane active" aria-labelledby="tabset-2-1-tab">
+<p>To test SQL Server I used <a href="https://hub.docker.com/layers/chriseaton/adventureworks/latest/images/sha256-aef97e8fb775dc6d19674a97979d17b7ae46ac634a49246dfd85f1b101bfae5c">this</a> docker image by Chris Eaton with AdventureWorks database prepopulated. <img src="https://kpatucha.github.io/posts/JupySQL/mssql_ext_connect.png" class="img-fluid" alt="MSSQL connection"></p>
+</div>
+<div id="tabset-2-2" class="tab-pane" aria-labelledby="tabset-2-2-tab">
+<p>To test PostgreSQL I used <a href="https://hub.docker.com/layers/chriseaton/adventureworks/postgres/images/sha256-3d396f7e340138edf27f0ec6cd6b90e50da314a73d4cc7d98d7bf576ecac4faf">this</a> docker image by Chris Eaton with AdventureWorks database prepopulated. <img src="https://kpatucha.github.io/posts/JupySQL/postgres_ext_connect.png" class="img-fluid" alt="PostgreSQL connection"></p>
+</div>
+<div id="tabset-2-3" class="tab-pane" aria-labelledby="tabset-2-3-tab">
+<p>To test Oracle I used <a href="https://hub.docker.com/layers/gvenzl/oracle-free/latest/images/sha256-d3760c92e53ce623e3f66e365209044a611ad7053230cfbd46f6c2958ee948a8">this</a> docker image by Gerald Venzl. <img src="https://kpatucha.github.io/posts/JupySQL/oracle_ext_connect.png" class="img-fluid" alt="Oracle connection"></p>
+</div>
+</div>
+</div>
+</section>
+<section id="sqlalchemy-engine" class="level2">
+<h2 class="anchored" data-anchor-id="sqlalchemy-engine">SQLAlchemy engine</h2>
+<p>Create <a href="https://docs.sqlalchemy.org/en/20/core/connections.html#module-sqlalchemy.engine">SQLAlchemy engine</a></p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="db_type">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" aria-controls="tabset-3-1" aria-selected="true" href="">SQL Server</a></li><li class="nav-item"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" aria-controls="tabset-3-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" aria-controls="tabset-3-3" aria-selected="false" href="">Oracle and others</a></li></ul>
+<div class="tab-content" data-group="db_type">
+<div id="tabset-3-1" class="tab-pane active" aria-labelledby="tabset-3-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> getpass</span>
+<span id="cb6-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> sqlalchemy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> sa</span>
+<span id="cb6-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pyodbc</span>
+<span id="cb6-4"></span>
+<span id="cb6-5">driver <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [driver <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> driver <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> pyodbc.drivers() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ODBC"</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> driver][<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>] <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># take available ODBC driver</span></span>
+<span id="cb6-6"></span>
+<span id="cb6-7">connection_url <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sa.engine.URL.create(</span>
+<span id="cb6-8">    drivername<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"mssql+pyodbc"</span>, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># dialect+driver</span></span>
+<span id="cb6-9">    username<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sa"</span>,</span>
+<span id="cb6-10">    password<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>getpass.getpass(), <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># you can write password here in plain text or pass environment variable</span></span>
+<span id="cb6-11">    host<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"localhost"</span>,</span>
+<span id="cb6-12">    port<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"1433"</span>,</span>
+<span id="cb6-13">    database<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"AdventureWorks"</span>,</span>
+<span id="cb6-14">    query<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>{ <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># different key: value pairs for each type of database</span></span>
+<span id="cb6-15">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"driver"</span>: driver,</span>
+<span id="cb6-16">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Encrypted"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"yes"</span>,</span>
+<span id="cb6-17">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"TrustServerCertificate"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"yes"</span>,</span>
+<span id="cb6-18">    },</span>
+<span id="cb6-19">)</span>
+<span id="cb6-20"></span>
+<span id="cb6-21">engine <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sa.create_engine(connection_url)</span></code></pre></div></div>
+</div>
+<div id="tabset-3-2" class="tab-pane" aria-labelledby="tabset-3-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> getpass</span>
+<span id="cb7-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> sqlalchemy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> sa</span>
+<span id="cb7-3"></span>
+<span id="cb7-4">connection_url <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sa.engine.URL.create(</span>
+<span id="cb7-5">    drivername<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"postgresql+psycopg"</span>, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># dialect+driver</span></span>
+<span id="cb7-6">    username<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"postgres"</span>,</span>
+<span id="cb7-7">    password<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>getpass.getpass(), <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># you can write password here in plain text or pass environment variable</span></span>
+<span id="cb7-8">    host<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"localhost"</span>,</span>
+<span id="cb7-9">    port<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"5432"</span>,</span>
+<span id="cb7-10">    database<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"postgres"</span>,</span>
+<span id="cb7-11">)</span>
+<span id="cb7-12"></span>
+<span id="cb7-13">engine <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sa.create_engine(connection_url)</span></code></pre></div></div>
+</div>
+<div id="tabset-3-3" class="tab-pane" aria-labelledby="tabset-3-3-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> getpass</span>
+<span id="cb8-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> sqlalchemy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> sa</span>
+<span id="cb8-3"></span>
+<span id="cb8-4">connection_url <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sa.engine.URL.create(</span>
+<span id="cb8-5">    drivername<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"oracle+oracledb"</span>, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># dialect+driver</span></span>
+<span id="cb8-6">    username<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"my_user"</span>,</span>
+<span id="cb8-7">    password<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>getpass.getpass(), <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># you can write password here in plain text or pass environment variable</span></span>
+<span id="cb8-8">    host<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"localhost"</span>,</span>
+<span id="cb8-9">    port<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"1521"</span>,</span>
+<span id="cb8-10">    query<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>{ <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># different key: value pairs for each type of database</span></span>
+<span id="cb8-11">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"service_name"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"FREEPDB1"</span></span>
+<span id="cb8-12">    }</span>
+<span id="cb8-13">)</span>
+<span id="cb8-14"></span>
+<span id="cb8-15">engine <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sa.create_engine(connection_url)</span></code></pre></div></div>
+</div>
+</div>
+</div>
+</section>
+<section id="jupysql" class="level2">
+<h2 class="anchored" data-anchor-id="jupysql">JupySQL</h2>
+<p>Load <a href="https://jupysql.readthedocs.io/en/latest/quick-start.html">JupySQL</a> magics and pass <code>engine</code> to establish connection (best use <code>--alias</code> here for future reference)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>load_ext sql</span>
+<span id="cb9-2"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>sql engine <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>alias my_db</span></code></pre></div></div>
+</section>
+<section id="sql-cell" class="level2">
+<h2 class="anchored" data-anchor-id="sql-cell">SQL cell</h2>
+<p>Change language of the cell to SQL either by:</p>
+<ul>
+<li>clicking in right bottom corner of the cell <img src="https://kpatucha.github.io/posts/JupySQL/select_language.png" class="img-fluid" alt="Select cell language"></li>
+<li>using command palette (by default <code>Ctrl+Shift+P</code>) and choosing <code>Notebook: Change Cell Language</code></li>
+<li>using shortcut <code>Ctrl+K, M</code> (by default)</li>
+</ul>
+<p><br>
+<img src="https://kpatucha.github.io/posts/JupySQL/change_language.png" class="img-fluid" alt="Change language"></p>
+<p>Make sure that the cell is connected to the database by looking at the little text at the top left of the cell (you might need to click it select the connection and database)</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="db_type">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" aria-controls="tabset-4-1" aria-selected="true" href="">SQL Server</a></li><li class="nav-item"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" aria-controls="tabset-4-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" aria-controls="tabset-4-3" aria-selected="false" href="">Oracle and others</a></li></ul>
+<div class="tab-content" data-group="db_type">
+<div id="tabset-4-1" class="tab-pane active" aria-labelledby="tabset-4-1-tab">
+<p><br>
+<img src="https://kpatucha.github.io/posts/JupySQL/mssql_cell.png" class="img-fluid" alt="MSSQL cell"></p>
+</div>
+<div id="tabset-4-2" class="tab-pane" aria-labelledby="tabset-4-2-tab">
+<p><br>
+<img src="https://kpatucha.github.io/posts/JupySQL/postgres_cell.png" class="img-fluid" alt="PostgreSQL cell"></p>
+</div>
+<div id="tabset-4-3" class="tab-pane" aria-labelledby="tabset-4-3-tab">
+<p><br>
+<img src="https://kpatucha.github.io/posts/JupySQL/oracle_cell.png" class="img-fluid" alt="Oracle cell"></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="write-sql-in-the-cell" class="level1">
+<h1>Write SQL in the cell</h1>
+<p>Put <code>%%sql</code> magic at the top of the cell. You can now write SQL queries in the SQL cell and enjoy IntelliSense (context aware autocomplete) for SQL syntax and database objects as well as SQL formatting<sup>3</sup>.</p>
+<p>I must admit the setup is kind of fragile. In case IntelliSense for database objects doesn’t work try one or all of these:</p>
+<ul>
+<li>using command palette (<code>Ctrl+Shift+P</code>) select <code>MS SQL: Refresh IntelliSense Cache</code> (or equivalent in other extension)</li>
+<li>delete cell and create new one (change it’s language to SQL and connect it to database)</li>
+<li>restart VS Code</li>
+<li>(this one is weird) type your first SQL queries slowly, once it gets going you can type faster (maybe it has something to do with the fact that SQL IntelliSense in VS Code is kinda slow?)</li>
+</ul>
+<p><br>
+<img src="https://kpatucha.github.io/posts/JupySQL/intellisense.png" class="img-fluid" alt="IntelliSense"></p>
+</section>
+<section id="work-with-pandas" class="level1">
+<h1>Work with pandas</h1>
+<p>In order to pass the result of the query to Pandas DataFrame there is a two step process</p>
+<ol type="1">
+<li><p>Assign result to a variable e.g.&nbsp;<code>sql_result</code> modyfying the <code>%%sql</code> magic</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%%</span>sql sql_result <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;&lt;</span></span>
+<span id="cb10-2">SELECT</span>
+<span id="cb10-3"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span>
+<span id="cb10-4">FROM Production.Product</span></code></pre></div></div></li>
+<li><p>In next Python cell extract it to DataFrame</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">df_result <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sql_result.DataFrame()</span></code></pre></div></div></li>
+</ol>
+<p>Alternatively, you can setup Pandas output globally (this allows to skip second step):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>config SqlMagic.autopanda <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span></code></pre></div></div>
+<p>To save an existing DataFrame <code>df</code> to database you can use flag <code>--persist</code> or <code>--persist-replace</code> (table will have the same name as the DataFrame variable, <code>schema</code> is simply schema in the database)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>sql <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>persist schema.df</span>
+<span id="cb13-2"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>sql <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>persist<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>replace schema.df </span></code></pre></div></div>
+</section>
+<section id="close-connection" class="level1">
+<h1>Close connection</h1>
+<p>To close connection use <code>--close</code> flag with connection alias</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>sql <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>close my_db</span></code></pre></div></div>
+</section>
+<section id="other-features" class="level1">
+<h1>Other features</h1>
+<p>There are a lot of other features in JupySQL like</p>
+<ul>
+<li>parametric queries using Jinja</li>
+<li>working with multiple connections</li>
+<li>query <code>.csv</code> and Excel files</li>
+<li>plotting results of the queries</li>
+</ul>
+<p>and much more. Everything is cleanly explained in the <a href="https://jupysql.readthedocs.io/en/latest/quick-start.html">JupySQL documentation</a></p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Recently <a href="https://learn.microsoft.com/en-us/sql/tools/visual-studio-code-extensions/mssql/mssql-sql-notebooks?view=sql-server-ver17">SQL notebooks</a> were added to the SQL Server (mssql) extension. They are for SQL only - you cannot work with Python AND SQL in the same notebook. Be careful not to change kernel to MSSQL - it overrides notebook metadata. When you try to go back to Python kernel ALL code cells will have language changed to SQL without easy option to go back - you need to open the notebook with text editor and delete <code>"metadata": {"vscode": {"languageId": "sql"}}</code> from each cell.↩︎</p></li>
+<li id="fn2"><p>Although there is official <a href="https://marketplace.visualstudio.com/items?itemName=Oracle.sql-developer">Oracle extension</a> it doesn’t integrate with Jupyter notebooks nicely since it introduces new language PL/SQL which is not available for Jupyter notebook cells.↩︎</p></li>
+<li id="fn3"><p>Depending on your formatting options it might not like <code>%%sql</code> magic as it is not part of standard SQL syntax - you can simply put it at the top of the cell just before execution.↩︎</p></li>
+</ol>
+</section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{patucha2026,
+  author = {Patucha, Konrad},
+  title = {SQL in {Jupyter} {Notebook} {(JupySQL} + {VS} {Code} +
+    {Jupyter} {Notebook)}},
+  date = {2026-06-08},
+  url = {https://kpatucha.github.io/posts/JupySQL/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-patucha2026" class="csl-entry quarto-appendix-citeas">
+<div class="">K.
+Patucha, <em>SQL in Jupyter Notebook (JupySQL + VS Code + Jupyter
+Notebook) </em>, <a href="https://kpatucha.github.io/posts/JupySQL/">https://kpatucha.github.io/posts/JupySQL/</a>.</div>
+</div></div></section></div> ]]></description>
+  <category>Data Science</category>
+  <guid>https://kpatucha.github.io/posts/JupySQL/</guid>
+  <pubDate>Sun, 07 Jun 2026 22:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Dyck paths and Raney’s (cycle) lemma</title>
   <dc:creator>Konrad Patucha</dc:creator>
@@ -48,7 +519,7 @@
 </div>
 </div>
 <p>Maybe it is not common convention but let’s call Dyck path from <img src="https://latex.codecogs.com/png.latex?(0,0)"> to <img src="https://latex.codecogs.com/png.latex?(n,n)"> <strong>Dyck path of order <img src="https://latex.codecogs.com/png.latex?n"></strong></p>
-<div id="83e27a90" class="cell" data-execution_count="1">
+<div id="06f121a9" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
@@ -399,7 +870,7 @@ font-style: inherit;">4</span>])</span>
 </div>
 </div>
 <p>Imagine a <em>non-Dyck path</em> - at some point it crosses the <img src="https://latex.codecogs.com/png.latex?y=x"> line. Let’s call first step that makes the path a non-Dyck path <em>the bad step</em> - it causes the line to cross the <img src="https://latex.codecogs.com/png.latex?y=x"> line. Now reflect the part of the path from start up to the bad step with respect to line <img src="https://latex.codecogs.com/png.latex?y=x-1">.</p>
-<div id="122bf50d" class="cell" data-execution_count="2">
+<div id="8948fd53" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">fig, ax <span class="op" style="color: #5E5E5E;
@@ -595,7 +1066,7 @@ font-style: inherit;">4</span>])</span></code></pre></div></div>
 <p>To prove Raney’s lemma we can use visual proof.</p>
 <p>First, let’s glue second copy of a sequence to our original sequence so we have a sequence of length <img src="https://latex.codecogs.com/png.latex?2n"> which satisfies: <img src="https://latex.codecogs.com/png.latex?%0Ax_%7Bi+n%7D%20=%20x_i%0A"></p>
 <p>If we plot cumulative sums of this extended sequence we get something like this:</p>
-<div id="5748895c" class="cell" data-execution_count="3">
+<div id="ba162b7a" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">seq <span class="op" style="color: #5E5E5E;
@@ -801,7 +1272,7 @@ font-style: inherit;">1</span>,</span>
 </div>
 </div>
 <p>Shifting start of the sequence in this representation is equivalent to cyclic permutation (order of elements is preserved and elements discarded from beginning of the original sequence are taken from the glued copy). If we shift the start to the global minimum of the cumulative sums, the resulting cyclic permutation of the sequence will satisfy condition Eq.&nbsp;4 for cumulative sums. In case the minimum is degenerate (like in presented example - there are two minima), we take the last minimum as our starting point.</p>
-<div id="58e6a2a6" class="cell" data-execution_count="4">
+<div id="32c71dc7" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">min_idx <span class="op" style="color: #5E5E5E;
@@ -1080,7 +1551,7 @@ font-style: inherit;">1</span>,</span>
 <section id="counting-dyck-paths---cyclic-permutations" class="level1">
 <h1>Counting Dyck paths - cyclic permutations</h1>
 <p>Equipped with Raney’s lemma we can move to second method of counting Dyck paths. But first we need to change representation of paths from sequence of UP and RIGHT steps to sequence of height of steps at each position:</p>
-<div id="d8059b7d" class="cell" data-execution_count="5">
+<div id="4defc735" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">dyck_path <span class="op" style="color: #5E5E5E;
@@ -1367,7 +1838,7 @@ font-style: inherit;">"Non-Dyck path, step heights"</span>)</span>
 </ol></li>
 </ol>
 <p>In Python, this can be implemented using generators (they allow to iterate over some sequence similarilry to <code>range</code> or various generators from <code>itertools</code> module):</p>
-<div id="6313a855" class="cell" data-execution_count="6">
+<div id="16649b37" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -1510,7 +1981,7 @@ background-color: null;
 font-style: inherit;"># start from single UP step</span></span></code></pre></div></div>
 </div>
 <p>Slightly modified version returns Dyck paths in step height representation:</p>
-<div id="9c29d37a" class="cell" data-execution_count="7">
+<div id="7c91791b" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -1660,7 +2131,7 @@ background-color: null;
 font-style: inherit;">0</span>)</span></code></pre></div></div>
 </div>
 <p>Let’s test it in action for order <img src="https://latex.codecogs.com/png.latex?n=4"></p>
-<div id="9ef065f5" class="cell" data-execution_count="8">
+<div id="649410dc" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
@@ -1797,7 +2268,7 @@ font-style: inherit;">"</span>)</span>
 <div class="">K.
 Patucha, <em>Dyck Paths and Raney’s (Cycle) Lemma </em>, <a href="https://kpatucha.github.io/posts/Dyck-paths-Raneys-lemma/">https://kpatucha.github.io/posts/Dyck-paths-Raneys-lemma/</a>.</div>
 </div></div></section></div> ]]></description>
-  <category>combinatorics</category>
+  <category>Combinatorics</category>
   <guid>https://kpatucha.github.io/posts/Dyck-paths-Raneys-lemma/</guid>
   <pubDate>Sat, 02 May 2026 22:00:00 GMT</pubDate>
 </item>

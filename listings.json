@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/JupySQL/index.html",
       "/posts/Dyck-paths-Raneys-lemma/index.html"
     ]
   }
