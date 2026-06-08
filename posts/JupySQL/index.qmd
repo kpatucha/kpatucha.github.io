@@ -5,6 +5,7 @@ date: 2026-06-08
 author: "Konrad Patucha"
 categories: [Data Science]
 description: How to work with SQL in Jupyter Notebook, with QoL features like autocompletion.
+image: intellisense.png
 ---
 
 # Motivation

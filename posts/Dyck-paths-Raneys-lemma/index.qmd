@@ -5,6 +5,7 @@ date: 2026-05-03
 author: "Konrad Patucha"
 categories: [Combinatorics]
 description: Counting paths on square lattice using cycle permutations
+freeze: true
 ---
 
 # Motivation
