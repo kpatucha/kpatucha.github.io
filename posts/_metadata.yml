@@ -8,7 +8,7 @@ freeze: false
 title-block-banner: true
 
 # Enable CC licence appendix
-license: "CC BY"
+license: "CC0"
 
 # Default for table of contents
 toc: true
