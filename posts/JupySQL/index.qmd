@@ -232,7 +232,7 @@ In order to pass the result of the query to Pandas DataFrame there is a two step
 Alternatively, you can setup Pandas output globally (this allows to skip second step):
 
 ```python
-%config SqlMagic.autopanda = True
+%config SqlMagic.autopandas = True
 ```
 
 To save an existing DataFrame `df` to database you can use flag `--persist` or `--persist-replace` (table will have the same name as the DataFrame variable, `schema` is simply schema in the database)
